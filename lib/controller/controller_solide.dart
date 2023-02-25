@@ -1,5 +1,6 @@
 import 'package:service_electronic/Data/model/currency.model.dart';
 import 'package:service_electronic/Data/model/user.mode.dart';
+import 'package:service_electronic/routes.dart';
 import 'package:service_electronic/view/screen/screen_home/screen_echange/echonge_2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,7 +27,7 @@ class MyEchongeController extends GetxController {
 
   reservation() async {
     if (solidFormKey.currentState!.validate()) {
-      await Get.to(() => echonge_2(), arguments: {
+      await Get.toNamed(AppRoute.echonge2, arguments: {
         'sended_currency': solidTo[to.value],
         'received_currency': solid[from.value],
         'sended_balance': double.parse(send.text),
@@ -68,7 +69,8 @@ class MyEchongeController extends GetxController {
       update();
     });
     from.listen((from) {
-      solidTo.value = from != -1 ? solid[from].prices.keys.toList() : [];
+      solidTo.value =
+          from != -1 ? solid[from].avaliableCurrencies.values.toList() : [];
     });
     super.onInit();
   }

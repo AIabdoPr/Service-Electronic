@@ -27,9 +27,11 @@ class NotificationModel {
 
   String get imageUrl => "${Applink.filesUrl}/$image";
 
-  String? get attachmentImageUrl => data.containsKey('attachment_image')
-      ? "${Applink.filesUrl}/${data['attachment_image']}"
-      : null;
+  String? get attachmentImageUrl {
+    return data.containsKey('attachment_image')
+        ? "${Applink.filesUrl}/${data['attachment_image']}"
+        : null;
+  }
 
   static StorageCollection collection =
       Get.find<MainService>().storageDatabase.collection('notifications');
@@ -39,7 +41,7 @@ class NotificationModel {
         data['name'],
         data['title'],
         data['message'],
-        data['image_id'],
+        data['image_id'] ?? 'logo',
         DateTime.parse(data['created_at']),
         data['data']?.isNotEmpty == true ? data['data'] : {},
         data['is_readed'] == 1,
@@ -59,8 +61,7 @@ class NotificationModel {
           await Get.find<MainService>().storageDatabase.storageAPI!.request(
                 'notification/all',
                 RequestType.get,
-          headers: Applink.authedHeaders,
-                log: true,
+                headers: Applink.authedHeaders,
               );
       if (response.success && response.value != null) {
         await collection.set(

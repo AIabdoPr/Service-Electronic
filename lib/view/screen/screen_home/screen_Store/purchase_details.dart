@@ -37,6 +37,9 @@ class _PurchaseDetailsState extends State<PurchaseDetails> {
   @override
   void initState() {
     super.initState();
+    // purchase.stream().listen((purchase) => setState(() {
+    //       this.purchase = purchase;
+    //     }));
     if (!purchase.deliverySteps.isReaded && isSeller) {
       storageDatabase.storageAPI!.request(
         'purchase/${purchase.id}/read',
@@ -50,6 +53,8 @@ class _PurchaseDetailsState extends State<PurchaseDetails> {
   Future<bool> answer() async {
     if (answerKey.currentState!.validate()) {
       setState(() => isAnswering = true);
+
+      DialogsView.loading().show();
       final response = await storageDatabase.storageAPI!.request(
         isSeller
             ? 'purchase/${purchase.id}/seller_answer'
@@ -70,14 +75,17 @@ class _PurchaseDetailsState extends State<PurchaseDetails> {
         }
         purchase = await PurchaseModel.fromId(
               purchase.id,
+              purchase.document,
               target: isSeller ? 'seller' : 'user',
             ) ??
             purchase;
         setState(() => isAnswering = false);
+        Get.back();
         return true;
       }
       setState(() => isAnswering = false);
     }
+    // Get.back();
     return false;
   }
 
@@ -90,7 +98,8 @@ class _PurchaseDetailsState extends State<PurchaseDetails> {
             );
     if (response.success) {
       await PurchaseModel.sellerLoadAll();
-      purchase = await PurchaseModel.fromId(purchase.id) ?? purchase;
+      purchase = await PurchaseModel.fromId(purchase.id, purchase.document) ??
+          purchase;
       setState(() {});
     }
   }
@@ -193,6 +202,7 @@ class _PurchaseDetailsState extends State<PurchaseDetails> {
             await PurchaseModel.sellerLoadAll();
             purchase = await PurchaseModel.fromId(
                   purchase.id,
+                  purchase.document,
                   target: isSeller ? 'seller' : 'user',
                 ) ??
                 purchase;
@@ -338,23 +348,44 @@ class _PurchaseDetailsState extends State<PurchaseDetails> {
                       ],
                     ),
                   )
-                else if (purchase.status == 'seller_refuse') ...[
+                else if ([
+                  'seller_refuse',
+                  'client_accept',
+                  'client_refuse',
+                  'seller_reported',
+                  'admin_answered'
+                ].contains(purchase.status)) ...[
                   const Gap(15),
                   Text(
-                    '34'.tr,
+                    {
+                          'seller_refuse': isSeller
+                              ? '34'.tr
+                              : 'Your request has been  refused',
+                          'client_accept': isSeller
+                              ? 'Your delivery has benn received'
+                              : 'You received this product',
+                          'client_refuse': isSeller
+                              ? 'Your delivery has benn refused by client'
+                              : 'You refused this product',
+                          'admin_answered': 'Answered by admin'
+                        }[purchase.status] ??
+                        '',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w600,
-                      color: Colors.red,
+                      color: purchase.status == 'client_accept'
+                          ? Colors.green
+                          : Colors.red,
                     ),
                   )
-                ] else if (!isSeller &&
-                        (purchase.status == 'waiting' ||
-                            purchase.status == 'waiting_client_answer') ||
-                    isSeller &&
-                        (purchase.status == 'seller_accept' ||
-                            purchase.status == 'waiting_client_answer'))
+                ] else
+                  // if (!isSeller &&
+                  //         (purchase.status == 'waiting' ||
+                  //             purchase.status == 'waiting_client_answer') ||
+                  //     isSeller &&
+                  //         (purchase.status == 'seller_accept' ||
+                  //             purchase.status == 'waiting_client_answer'))
                   DeliverySteperView(
                     margin: const EdgeInsets.symmetric(horizontal: 15),
                     steps: [

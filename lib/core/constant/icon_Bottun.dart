@@ -5,7 +5,9 @@ class MyIconBottun extends StatelessWidget {
   final void Function()? onTap;
   final int count;
   final IconData? icon;
-  final Color? backgroundColor;
+  final Color color;
+  final double posX, posY;
+  final double? size;
 
   final double? radius;
   const MyIconBottun({
@@ -13,7 +15,10 @@ class MyIconBottun extends StatelessWidget {
     required this.count,
     this.icon,
     this.radius,
-    this.backgroundColor,
+    this.color = Colors.red,
+    this.posX = 0,
+    this.posY = 0,
+    this.size,
     required this.onTap,
   }) : super(key: key);
 
@@ -24,31 +29,32 @@ class MyIconBottun extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: SizedBox(
-        width: w * 0.1,
+        width: w * 0.11,
         child: Stack(
           children: [
             Positioned(
-              top: h * 0.013,
-              left: w * 0.01,
+              top: 12,
+              left: 0,
               child: Icon(
                 icon,
-                size: w * 0.083,
+                size: 35,
               ),
             ),
-            if(count!= 0)
-            Positioned(
-              top: 0,
-              left: 0,
-              child: Container(
-                width: w * 0.05,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(50),
+            if (count != 0)
+              Positioned(
+                top: 10,
+                left: posX,
+                child: Container(
+                  width: size ?? 20,
+                  height: size ?? 20,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Text('${count < 10 ? count : '9+'}'),
                 ),
-                child: Text('$count'),
-              ),
-            )
+              )
           ],
         ),
       ),

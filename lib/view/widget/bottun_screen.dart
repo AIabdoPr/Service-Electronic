@@ -21,36 +21,58 @@ class BottunScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
+    final w = MediaQuery.of(context).size.height;
+    final h = MediaQuery.of(context).size.width;
     return Container(
-      margin: EdgeInsets.only(bottom: 50),
-      height: height,
       width: width,
+      height: height,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.all(Radius.circular(30)),
-        boxShadow:const [
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: const [
           BoxShadow(
             color: Colors.black87,
             spreadRadius: 4,
             blurRadius: 10,
-            offset: Offset(0,0),
+            offset: Offset(0, 0),
           )
         ],
-        image: DecorationImage(
-          fit: BoxFit.fill,
-          image: AssetImage(assetName),
-        ),
       ),
-      child: MaterialButton(
+      margin: EdgeInsets.symmetric(vertical: 20),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Color.fromARGB(255, 236, 236, 236),
+          elevation: 0,
+          shadowColor: Color.fromARGB(230, 0, 0, 0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+        ),
         onPressed: onPressed,
-        padding: EdgeInsets.only(top: 220),
-        child: FittedBox(
-            child: Text(
-          text,
-          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-        )),
+        child: Flex(
+          direction: Axis.vertical,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Flexible(
+              child: Image.asset(
+                assetName,
+                fit: BoxFit.fill,
+              ),
+            ),
+            FittedBox(
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -1,7 +1,6 @@
 import 'package:gap/gap.dart';
 import 'package:service_electronic/Data/model/product.model.dart';
 import 'package:service_electronic/Data/model/user.mode.dart';
-import 'package:service_electronic/core/localization/localiztioncontroller.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -44,7 +43,6 @@ class _ProfielState extends State<Profiel> {
     final h = MediaQuery.of(context).size.height;
     final w = MediaQuery.of(context).size.width;
 
-    LocaleController contr = Get.put(LocaleController());
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -72,6 +70,7 @@ class _ProfielState extends State<Profiel> {
                       top: 20,
                     ),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         SizedBox(
                           height: 250,
@@ -107,7 +106,8 @@ class _ProfielState extends State<Profiel> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(50),
                                     border: Border.all(
-                                      color: Color.fromARGB(0, 173, 173, 173),
+                                      color: const Color.fromARGB(
+                                          0, 173, 173, 173),
                                       width: 3,
                                     ),
                                     boxShadow: const [
@@ -145,146 +145,42 @@ class _ProfielState extends State<Profiel> {
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.only(right: 10, left: 10, top: 10),
-                          child: Row(
-                            children: [
-                              Text("7".tr),
-                              Expanded(child: SizedBox()),
-                              InkWell(
-                                  onTap: () {
-                                    Get.defaultDialog(
-                                        title: "72".tr,
-                                        middleText: "73".tr,
-                                        actions: [
-                                          Row(
-                                            children: [
-                                              SizedBox(
-                                                width: w * 0.08,
-                                              ),
-                                              InkWell(
-                                                onTap: () {
-                                                  contr.changelang("en");
-                                                  Get.back();
-                                                },
-                                                child: Container(
-                                                  height: h * 0.04,
-                                                  width: w * 0.2,
-                                                  margin: const EdgeInsets.only(
-                                                      left: 10,
-                                                      right: 10,
-                                                      bottom: 15),
-                                                  child: Center(
-                                                    child: const Text(
-                                                      "English",
-                                                      style: TextStyle(
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                      color:
-                                                          const Color.fromARGB(
-                                                              255,
-                                                              177,
-                                                              235,
-                                                              179),
-                                                      border: Border.all(
-                                                          color: Colors.black,
-                                                          width: 1.5),
-                                                      boxShadow: const [
-                                                        BoxShadow(
-                                                          color: Colors.black87,
-                                                          spreadRadius: 0,
-                                                          blurRadius: 3,
-                                                          offset:
-                                                              Offset(3.2, 2.2),
-                                                        )
-                                                      ],
-                                                      borderRadius:
-                                                          const BorderRadius
-                                                                  .all(
-                                                              Radius.circular(
-                                                                  20))),
-                                                ),
-                                              ),
-                                              InkWell(
-                                                onTap: () {
-                                                  contr.changelang("ar");
-                                                  Get.back();
-                                                },
-                                                child: Container(
-                                                  height: h * 0.04,
-                                                  width: w * 0.2,
-                                                  margin: const EdgeInsets.only(
-                                                      left: 10,
-                                                      right: 10,
-                                                      bottom: 15),
-                                                  child: Center(
-                                                    child: Text(
-                                                      "العربية",
-                                                      style: const TextStyle(
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                      color:
-                                                          const Color.fromARGB(
-                                                              255,
-                                                              177,
-                                                              235,
-                                                              179),
-                                                      border: Border.all(
-                                                          color: Colors.black,
-                                                          width: 1.5),
-                                                      boxShadow: const [
-                                                        BoxShadow(
-                                                          color: Colors.black87,
-                                                          spreadRadius: 0,
-                                                          blurRadius: 3,
-                                                          offset:
-                                                              Offset(3.2, 2.2),
-                                                        )
-                                                      ],
-                                                      borderRadius:
-                                                          const BorderRadius
-                                                                  .all(
-                                                              Radius.circular(
-                                                                  20))),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: w * 0.08,
-                                              ),
-                                            ],
-                                          ),
-                                        ]);
-                                  },
-                                  child: const Icon(
-                                    Icons.language,
-                                    color: Colors.blue,
-                                  )),
-                            ],
-                          ),
+                          margin: const EdgeInsets.only(
+                              right: 10, left: 10, top: 10),
+                          child: Text("${"116".tr} : ${user.firstname}"),
                         ),
-                        Gap(10),
+                        Container(
+                          margin: const EdgeInsets.only(
+                              right: 10, left: 10, top: 10),
+                          child: Text("${"153".tr} : ${user.lastname}"),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(
+                              right: 10, left: 10, top: 10),
+                          child: Text("${"2".tr} : ${user.email}"),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(
+                              right: 10, left: 10, top: 10),
+                          child: Text("${"15".tr} : ${user.phone}"),
+                        ),
+                        const Gap(10),
                         const Divider(thickness: 2),
                         RefreshIndicator(
                           onRefresh: getProducts,
                           child: isLoading
-                              ? Center(
+                              ? const Center(
                                   child: CircularProgressIndicator(),
                                 )
                               : ListView.builder(
                                   shrinkWrap: true,
                                   itemCount: products.length,
-                                  physics: ScrollPhysics(),
+                                  physics: const ScrollPhysics(),
                                   itemBuilder: (context, index) {
                                     return VewModel(
                                       product: products[index],
                                       onActionEnd: getProducts,
+                                      editable: true,
                                     );
                                   },
                                 ),

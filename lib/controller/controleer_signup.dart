@@ -1,8 +1,9 @@
-import 'package:service_electronic/core/class/statusRequest.dart';
+import 'dart:io';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:service_electronic/link_api.dart';
 
 import 'package:service_electronic/routes.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,48 +27,40 @@ class signupController extends GetxController {
 
   signup() async {
     if (formstate.currentState!.validate()) {
-      // update();
       DialogsView.loading().show();
-      try {
-        APIResponse signupResponse =
-            await myService.storageDatabase.storageAPI!.request(
-          Applink.singup,
-          RequestType.post,
-          headers: Applink.headers,
-          data: {
-            'firstname': firsetnem.text,
-            'lastname': lastnem.text,
-            'email': email.text,
-            'phone': phone.text,
-            'password': password.text,
-            'messaging_token': await FirebaseMessaging.instance.getToken()
-          },
-          log: true,
-        );
+      APIResponse signupResponse =
+          await myService.storageDatabase.storageAPI!.request(
+        Applink.singup,
+        RequestType.post,
+        headers: Applink.headers,
+        log: true,
+        data: {
+          'firstname': firsetnem.text,
+          'lastname': lastnem.text,
+          'email': email.text,
+          'phone': phone.text,
+          'password': password.text,
+          'messaging_token': !Platform.isWindows
+              ? await FirebaseMessaging.instance.getToken()
+              : '',
+        },
+      );
 
-        if (signupResponse.success && signupResponse.value != null) {
-          Get.offNamed(
-            AppRoute.VerificodeSingup,
-            arguments: signupResponse.value,
-          );
-        } else {
-          Get.back();
-          if (signupResponse.errors != null) {
-            errors = signupResponse.errors!;
-            update();
-            formstate.currentState!.validate();
-          } else {
-            Get.defaultDialog(
-              title: "Signup error",
-              middleText: signupResponse.message,
-            );
-          }
-        }
-      } catch (e) {
+      if (signupResponse.success && signupResponse.value != null) {
+        Get.offNamed(
+          AppRoute.VerificodeSingup,
+          arguments: signupResponse.value,
+        );
+      } else {
         Get.back();
+        if (signupResponse.errors != null) {
+          errors = signupResponse.errors!;
+          update();
+          formstate.currentState!.validate();
+        }
         Get.defaultDialog(
           title: "Signup error",
-          middleText: "Some things worng",
+          middleText: signupResponse.message,
         );
       }
     }

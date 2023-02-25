@@ -4,7 +4,7 @@ import 'package:service_electronic/Data/model/transfer.model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'controller_Sella.dart';
+import 'controller_sella.dart';
 
 class My_transactions extends StatelessWidget {
   const My_transactions({
@@ -51,7 +51,8 @@ class My_transactions extends StatelessWidget {
                                 ),
                               ),
                               Gap(5),
-                              Text(DateFormat('yyyy-MM-dd HH:mm').format(transfer.createdAt)),
+                              Text(DateFormat('yyyy-MM-dd HH:mm')
+                                  .format(transfer.createdAt)),
                             ],
                           ),
                           Container(

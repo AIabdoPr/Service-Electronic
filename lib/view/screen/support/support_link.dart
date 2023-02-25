@@ -13,12 +13,14 @@ class Supportlink extends StatelessWidget {
     final h = MediaQuery.of(context).size.height;
     final w = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.black,
-      title: Center(
-        child: Text("159".tr,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18),),
-      ),
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: Center(
+          child: Text(
+            "159".tr,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+        ),
       ),
       body: Stack(children: [
         Container(
@@ -33,58 +35,22 @@ class Supportlink extends StatelessWidget {
             child: Column(
               //crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                 Flexible(
-                   child: Text(
-                     "160".tr,
-                     style: const TextStyle(
-                     fontWeight: FontWeight.bold, fontSize: 18),
-                   ),
-                 ),
+                Flexible(
+                  child: Text(
+                    "160".tr,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                ),
                 SizedBox(
                   height: h * 0.10,
                 ),
                 InkWell(
                   onTap: () {
-                    launchUrl(Uri.parse(''));
-                  },
-                  child: InkWell(
-                    onTap: () {
-                      launchUrl(
-                          Uri.parse('https://www.facebook.com/ChihabR94'));
-                    },
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: Colors.blue,
-                          radius: 52,
-                          child: Container(
-                            height: h * 0.12,
-                            width: h * 0.12,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(50),
-                                image: const DecorationImage(
-                                    image: AssetImage(
-                                        "assets/images/facebook.png"))),
-                          ),
-                        ),
-                        const Gap(10),
-                        Flexible(
-                          child: FittedBox(
-                              child: Text(
-                            "157".tr,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18,color: Colors.blue),
-                          )),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const Gap(20),
-                InkWell(
-                  onTap: () {
-                    launchUrl(Uri.parse('https://t.me/+pwKpK4YhXHEyYjRk'));
+                    launchUrl(
+                      Uri.parse('https://www.facebook.com/ChihabR94'),
+                      mode: LaunchMode.externalApplication,
+                    );
                   },
                   child: Row(
                     children: [
@@ -92,14 +58,52 @@ class Supportlink extends StatelessWidget {
                         backgroundColor: Colors.blue,
                         radius: 52,
                         child: Container(
-                          height: h * 0.12,
-                          width: h * 0.12,
+                          height: 95,
+                          width: 95,
                           decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(50),
                               image: const DecorationImage(
                                   image: AssetImage(
-                                      "assets/images/telgram.png"))),
+                                      "assets/images/facebook.png"))),
+                        ),
+                      ),
+                      const Gap(10),
+                      Flexible(
+                        child: FittedBox(
+                            child: Text(
+                          "157".tr,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Colors.blue),
+                        )),
+                      ),
+                    ],
+                  ),
+                ),
+                const Gap(20),
+                InkWell(
+                  onTap: () {
+                    launchUrl(
+                      Uri.parse('https://t.me/+pwKpK4YhXHEyYjRk'),
+                      mode: LaunchMode.externalApplication,
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: Colors.blue,
+                        radius: 52,
+                        child: Container(
+                          height: 95,
+                          width: 95,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(50),
+                              image: const DecorationImage(
+                                  image:
+                                      AssetImage("assets/images/telgram.png"))),
                         ),
                       ),
                       const Gap(10),
@@ -108,7 +112,9 @@ class Supportlink extends StatelessWidget {
                             child: Text(
                           "158".tr,
                           style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18,color: Colors.blue),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Colors.blue),
                         )),
                       ),
                     ],
@@ -125,8 +131,8 @@ class Supportlink extends StatelessWidget {
                         backgroundColor: Colors.blue,
                         radius: 52,
                         child: Container(
-                          height: h * 0.12,
-                          width: h * 0.12,
+                          height: 95,
+                          width: 95,
                           decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(50),
@@ -141,7 +147,9 @@ class Supportlink extends StatelessWidget {
                             child: Text(
                           "156".tr,
                           style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18,color: Colors.blue),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Colors.blue),
                         )),
                       ),
                     ],

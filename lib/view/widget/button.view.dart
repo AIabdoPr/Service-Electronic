@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class ButtonView extends StatelessWidget {
   final Function()? onPressed;
   final EdgeInsets margin, padding;
@@ -147,9 +146,7 @@ class OutlineButtonView extends StatelessWidget {
           elevation: 0,
           side: BorderSide(color: borderColor ?? Color(0XFFACACAC), width: 1),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              20
-            ),
+            borderRadius: BorderRadius.circular(20),
           ),
           padding: padding,
         ),
@@ -194,8 +191,8 @@ class CirclerButton extends StatelessWidget {
     return CirclerButton(
       onPressed: onPressed,
       size: size,
-      borderSize:borderSize,
-      backgroundColor: backgroundColor ?? Color.fromARGB(0, 3, 3, 243),
+      borderSize: borderSize,
+      backgroundColor: backgroundColor ?? Color.fromARGB(255, 6, 115, 239),
       borderColor: borderColor,
       margin: margin,
       padding: padding,

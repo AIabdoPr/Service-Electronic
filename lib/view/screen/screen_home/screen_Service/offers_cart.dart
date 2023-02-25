@@ -4,13 +4,10 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:service_electronic/Data/model/offer_request.dart';
-import 'package:service_electronic/core/class/statusRequest.dart';
-import 'package:service_electronic/view/screen/screen_home/screen_Service/offer_request.dart';
 import 'package:service_electronic/view/widget/button.view.dart';
 import 'package:service_electronic/view/widget/network_image.view.dart';
 
 import '../../../../core/localization/localiztioncontroller.dart';
-import '../../../../routes.dart';
 
 class OffersCart extends StatelessWidget {
   const OffersCart({Key? key}) : super(key: key);
@@ -27,45 +24,21 @@ class OffersCart extends StatelessWidget {
           ),
         ),
       ),
-      body: GetBuilder<OffersCartController>(
-        init: OffersCartController(),
-        builder: (controller) {
-          if (controller.statusRequest == StatusRequest.success) {
-            return ListView.builder(
-              itemCount: controller.offerRequests.length,
-              itemBuilder: (context, index) {
-                OfferRequestModel offerRequest =
-                    controller.offerRequests[index];
-                return OfferRequestItem(offerRequest);
-              },
-            );
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: StreamBuilder<List<OfferRequestModel>>(
+        stream: OfferRequestModel.stream(),
+        builder: (context, snapshot) {
+          List<OfferRequestModel> offerRequests =
+              snapshot.data?.reversed.toList() ?? [];
+          return ListView.builder(
+            itemCount: offerRequests.length,
+            itemBuilder: (context, index) {
+              OfferRequestModel offerRequest = offerRequests[index];
+              return OfferRequestItem(offerRequest);
+            },
+          );
         },
       ),
     );
-  }
-}
-
-class OffersCartController extends GetxController {
-  RxList<OfferRequestModel> offerRequests = <OfferRequestModel>[].obs;
-
-  StatusRequest statusRequest = StatusRequest.loading;
-
-  @override
-  void onInit() {
-    getPurchases();
-    super.onInit();
-  }
-
-  Future getPurchases() async {
-    offerRequests.value = [];
-    statusRequest = StatusRequest.loading;
-    update();
-    offerRequests.value = await OfferRequestModel.loadAll();
-    statusRequest = StatusRequest.success;
-    update();
   }
 }
 
@@ -89,12 +62,15 @@ class _OfferRequestItemState extends State<OfferRequestItem> {
 
     String lang = Get.find<LocaleController>().language.languageCode;
     return InkWell(
-      onTap: () {
-        if (widget.offerRequest.data != null) {
-          showMore = !showMore;
-          setState(() {});
-        }
-      },
+      onTap: widget.offerRequest.data != null &&
+              widget.offerRequest.data!.isNotEmpty
+          ? () {
+              if (widget.offerRequest.data != null) {
+                showMore = !showMore;
+                setState(() {});
+              }
+            }
+          : null,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10)
@@ -119,12 +95,12 @@ class _OfferRequestItemState extends State<OfferRequestItem> {
                 NetworkImageView(
                   width: w * 0.23,
                   height: 80,
-                  margin: EdgeInsets.symmetric(vertical: 10),
+                  margin: const EdgeInsets.symmetric(vertical: 10),
                   url: widget.offerRequest.offer.image,
                   fit: BoxFit.fill,
                   setItInDecoration: true,
                 ),
-                Gap(10),
+                const Gap(10),
                 Flexible(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,7 +116,7 @@ class _OfferRequestItemState extends State<OfferRequestItem> {
                       Row(
                         children: [
                           Text(widget.offerRequest.status.tr),
-                          Gap(5),
+                          const Gap(5),
                           Icon(
                             widget.offerRequest.status.icon,
                             color: widget.offerRequest.status.color,
@@ -150,24 +126,27 @@ class _OfferRequestItemState extends State<OfferRequestItem> {
                       Text(
                         'Sended at: ${DateFormat('yyyy-MM-dd HH:mm').format(widget.offerRequest.sendedAt)}',
                       ),
-                      if (showMore && widget.offerRequest.data != null)
+                      if (showMore &&
+                          widget.offerRequest.data != null &&
+                          widget.offerRequest.data!.isNotEmpty)
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 5, vertical: 5),
-                          margin: EdgeInsets.symmetric(vertical: 5),
+                          padding: const EdgeInsets.symmetric(vertical: 5)
+                              .copyWith(left: 10),
+                          margin: const EdgeInsets.symmetric(vertical: 5),
                           decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 240, 240, 240),
+                            color: const Color.fromARGB(255, 240, 240, 240),
                             borderRadius: BorderRadius.circular(5),
                             border: Border.all(
                               width: 0.5,
-                              color: Color.fromARGB(255, 47, 47, 47),
+                              color: const Color.fromARGB(255, 47, 47, 47),
                             ),
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Flexible(
-                                child: Column(
+                                child: Flex(
+                                  direction: Axis.vertical,
                                   children: [
                                     for (String name
                                         in widget.offerRequest.data!.keys)
@@ -177,9 +156,11 @@ class _OfferRequestItemState extends State<OfferRequestItem> {
                                   ],
                                 ),
                               ),
+                              const Spacer(),
                               ButtonView(
                                 width: 30,
                                 height: 30,
+                                margin: EdgeInsets.zero,
                                 borderRaduis: 50,
                                 padding: EdgeInsets.zero,
                                 onPressed: () {
@@ -193,10 +174,7 @@ class _OfferRequestItemState extends State<OfferRequestItem> {
                                     ClipboardData(text: data),
                                   );
                                 },
-                                child: Icon(
-                                  Icons.copy,
-                                  size: 15,
-                                ),
+                                child: const Icon(Icons.copy, size: 15),
                               )
                             ],
                           ),
@@ -206,20 +184,22 @@ class _OfferRequestItemState extends State<OfferRequestItem> {
                 )
               ],
             ),
-            Container(
-              width: double.infinity,
-              height: 20,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(8),
-                  bottomRight: Radius.circular(8),
+            if (widget.offerRequest.data != null &&
+                widget.offerRequest.data!.isNotEmpty)
+              Container(
+                width: double.infinity,
+                height: 20,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(8),
+                    bottomRight: Radius.circular(8),
+                  ),
                 ),
-              ),
-              child: Icon(
-                !showMore ? Icons.expand_more : Icons.expand_less,
-                color: Colors.grey,
-              ),
-            )
+                child: Icon(
+                  !showMore ? Icons.expand_more : Icons.expand_less,
+                  color: Colors.grey,
+                ),
+              )
           ],
         ),
       ),

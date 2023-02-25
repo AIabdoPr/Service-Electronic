@@ -29,12 +29,35 @@ class SettingsController extends GetxController {
     XFile? imageprofiel =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (imageprofiel != null) {
-      APIResponse response = await user.updateImageProfile(
+      bool confirm = await DialogsView.message(
+            'Edit Image Profile',
+            'Are you sure you want to change your profile image',
+            actions: [
+              DialogAction(
+                text: 'Yes',
+                onPressed: () {
+                  Get.back(result: true);
+                },
+              ),
+              DialogAction(
+                text: 'No',
+                onPressed: () {
+                  Get.back(result: false);
+                },
+              )
+            ],
+          ).show() ??
+          false;
+      if (confirm) {
+        APIResponse response = await user.updateImageProfile(
           await FlutterNativeImage.compressImage(imageprofiel.path,
-              quality: 15));
+              quality: 15),
+        );
+        Get.back();
+        Get.snackbar('Edit Image Profile', response.message, backgroundColor: Colors.green).show();
+      }
       statusRequest = StatusRequest.success;
       update();
-      DialogsView.message('Edit Image Profile', response.message).show();
     }
   }
 
@@ -50,8 +73,7 @@ class SettingsController extends GetxController {
         ),
       ],
       onSubmit: (fields) async {
-        statusRequest = StatusRequest.loading;
-        update();
+        DialogsView.loading().show();
         APIResponse res = await mainService.storageDatabase.storageAPI!.request(
           'auth/change_email',
           RequestType.post,
@@ -61,10 +83,14 @@ class SettingsController extends GetxController {
           },
         );
         if (res.success && res.value != null) {
-          authSerivce.signout();
+          await authSerivce.clearData();
+          Get.back();
+          Get.offAllNamed(
+            AppRoute.VerificodeSingup,
+            arguments: res.value,
+          );
         } else {
-          statusRequest = StatusRequest.success;
-          update();
+          Get.back();
           DialogsView.message(
             'Edit Settings',
             res.message,

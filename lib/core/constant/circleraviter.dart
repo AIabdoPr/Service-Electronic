@@ -7,8 +7,6 @@ class mycircleraviter extends StatelessWidget {
   final double height;
   final double width;
   final Color? backgroundColor;
-  final String assets = "assets/images/";
-  final String image1 = "logo3.png";
 
   const mycircleraviter({
     Key? key,

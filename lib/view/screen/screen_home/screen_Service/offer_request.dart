@@ -18,11 +18,12 @@ class OfferRequest extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 252, 89, 77),
-          title: const Text(
-            'Request Offer',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          )),
+        backgroundColor: const Color.fromARGB(255, 252, 89, 77),
+        title: const Text(
+          'Request Offer',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
       body: GetBuilder<OfferRequestController>(
         init: OfferRequestController(),
         builder: (controller) {
@@ -79,32 +80,33 @@ class OfferRequest extends StatelessWidget {
                     for (Map field in offer.fields.values)
                       Container(
                         child: myTextFormField(
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          labeltext: field['title_$lang'],
-                          hintText: field['title_$lang'],
-                          mycontroller: controller.getFieldController(
-                            field['name'],
-                          ),
-                          valid: (text) {
-                            if (text!.isEmpty &&
-                                (field['validate'] as String)
-                                    .contains('required')) {
-                              return 'this field is required';
-                            }
-                            if ((field['validate'] as String).contains('email') &&
-                                !RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-                                    .hasMatch(text)) {
-                              return "21".tr;
-                            }
-                            if (controller.errors.containsKey(field['name'])) {
-                              return controller.errors[field['name']];
-                            }
-                          },
-                          border: const OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20),))
-                        ),
-
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            labeltext: field['title_$lang'],
+                            hintText: field['title_$lang'],
+                            mycontroller: controller.getFieldController(
+                              field['name'],
+                            ),
+                            valid: (text) {
+                              if (text!.isEmpty &&
+                                  (field['validate'] as String)
+                                      .contains('required')) {
+                                return 'this field is required';
+                              }
+                              // if ((field['validate'] as String)
+                              //         .contains('email') &&
+                              //     !RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+                              //         .hasMatch(text)) {
+                              //   return "21".tr;
+                              // }
+                              if (controller.errors
+                                  .containsKey(field['name'])) {
+                                return controller.errors[field['name']];
+                              }
+                            },
+                            border: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                              Radius.circular(20),
+                            ))),
                       ),
                     const Gap(10),
                     Text.rich(

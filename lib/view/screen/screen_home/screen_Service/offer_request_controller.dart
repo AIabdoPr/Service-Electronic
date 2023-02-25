@@ -2,6 +2,7 @@ import 'package:dartz/dartz_unsafe.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:service_electronic/Data/model/offer.model.dart';
+import 'package:service_electronic/Data/model/offer_request.dart';
 import 'package:service_electronic/Data/model/user.mode.dart';
 import 'package:service_electronic/core/class/statusRequest.dart';
 import 'package:service_electronic/core/services/auth.service.dart';
@@ -13,7 +14,6 @@ import 'package:storage_database/api/request.dart';
 import 'package:storage_database/api/response.dart';
 
 class OfferRequestController extends GetxController {
-  // StatusRequest statusRequest = StatusRequest.success;
   GlobalKey<FormState> requestKey = GlobalKey<FormState>();
   OfferModel offer = Get.arguments;
   Map<String, String> errors = {};
@@ -36,9 +36,9 @@ class OfferRequestController extends GetxController {
 
   @override
   void dispose() {
-    fieldsControllers.values.forEach((controller) {
+    for (var controller in fieldsControllers.values) {
       controller.dispose();
-    });
+    }
     super.dispose();
   }
 
@@ -53,8 +53,7 @@ class OfferRequestController extends GetxController {
           await Get.find<MainService>().storageDatabase.storageAPI!.request(
         'offer_request/${offer.id}/create',
         RequestType.post,
-          
-          headers: Applink.authedHeaders,
+        headers: Applink.authedHeaders,
         data: {
           'sub_offer': selectedSubOffer,
           for (String name in fieldsControllers.keys)

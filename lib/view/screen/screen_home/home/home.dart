@@ -1,16 +1,13 @@
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:service_electronic/Data/model/notification.model.dart';
-import 'package:service_electronic/controller/controller_Store.dart';
 import 'package:service_electronic/controller/controller_home.dart';
 import 'package:service_electronic/core/function/dealogAlartback.dart';
-import 'package:service_electronic/core/services/main.service.dart';
 import 'package:service_electronic/link_api.dart';
 import 'package:service_electronic/view/screen/screen_home/home/drawor.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import 'package:service_electronic/view/widget/dialogs.view.dart';
 import 'package:service_electronic/view/widget/network_image.view.dart';
 import '../../../../core/class/statusRequest.dart';
 import '../../../../core/constant/circleraviter.dart';
@@ -26,9 +23,8 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     final h = MediaQuery.of(context).size.height;
     final w = MediaQuery.of(context).size.width;
-
-    return GetBuilder<homeController>(
-      init: homeController(),
+    return GetBuilder<HomeController>(
+      init: HomeController(),
       builder: (controller) {
         return controller.statusRequest == StatusRequest.loading
             ? Center(
@@ -51,11 +47,17 @@ class Home extends StatelessWidget {
                       ),
                       actions: [
                         MyIconBottun(
-                          count: controller.notifictionCount,
+                          count: Get.find<NotificationService>()
+                              .newsTransfers
+                              .value,
                           radius: 8,
-                          onTap: () => Get.toNamed(AppRoute.homeCart),
+                          onTap: () async {
+                            await Get.toNamed(AppRoute.homeCart);
+                            Get.find<NotificationService>()
+                                .newsTransfers
+                                .value = 0;
+                          },
                           icon: Icons.notifications_on,
-                          backgroundColor: Colors.red,
                         ),
                         mycircleraviter(
                           image: "assets/images/logo3.png",
@@ -66,26 +68,23 @@ class Home extends StatelessWidget {
                           backgroundColor: Colors.white,
                         ),
                       ]),
-                  drawer: Obx(
-                    () => MyDrawer(
-                      user: controller.user.value,
-                      onTap:
-                        controller.singOut
-                    ,
-                    ),
-                  ),
+                  drawer: MyDrawer(onTap: controller.singOut),
                   floatingActionButton: Stack(
                     children: [
                       FloatingActionButton(
                         key: controller.floatingButtonKey,
-                        child: Icon(
+                        onPressed: controller.openNotifications,
+                        elevation: 10,
+                        child: const Icon(
                           Icons.message_outlined,
                           size: 35,
                         ),
-                        onPressed: controller.openNotifications,
-                        elevation: 10,
                       ),
-                      if (controller.notifictionCount != 0)
+                      // if (controller.notifictionCount != 0)
+                      if (Get.find<NotificationService>()
+                              .newsAdminMessages
+                              .value !=
+                          0)
                         CircleAvatar(
                           backgroundColor: Colors.blue,
                           radius: 13,
@@ -94,9 +93,12 @@ class Home extends StatelessWidget {
                             radius: 12,
                             child: FittedBox(
                                 child: Text(
-                              controller.notifictionCount > 9
+                              Get.find<NotificationService>()
+                                          .newsAdminMessages
+                                          .value >
+                                      9
                                   ? "9+"
-                                  : "${controller.notifictionCount}",
+                                  : "${Get.find<NotificationService>().newsAdminMessages.value}",
                               style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 12,
@@ -115,13 +117,122 @@ class Home extends StatelessWidget {
                           child: LayoutBuilder(
                             builder: (context, constrains) {
                               if (constrains.maxWidth <= 940) {
-                                return Container(
-                                  child: ListView(children: [
-                                    Column(
-                                      children: [
-                                        SizedBox(
-                                          height: h * 0.08,
-                                        ),
+                                return Obx(
+                                  () => ListView(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          SizedBox(
+                                            height: h * 0.08,
+                                          ),
+                                          if (controller
+                                                      .user
+                                                      .value!
+                                                      .platformSettings
+                                                      .servicesStatus[
+                                                  'transfers'] ==
+                                              'active')
+                                            BottunScreen(
+                                              height: h * 0.35,
+                                              width: w * 0.65,
+                                              assetName:
+                                                  ("assets/images/chonge.png"),
+                                              decoration: const BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: AssetImage(""),
+                                                ),
+                                              ),
+                                              text: "12".tr,
+                                              onPressed: () {
+                                                controller.echonge();
+                                              },
+                                              color: Colors.white,
+                                            ),
+                                          if (controller
+                                                  .user
+                                                  .value!
+                                                  .platformSettings
+                                                  .servicesStatus['offers'] ==
+                                              'active')
+                                            BottunScreen(
+                                              height: h * 0.35,
+                                              width: w * 0.65,
+                                              assetName:
+                                                  ("assets/images/Service.png"),
+                                              decoration: const BoxDecoration(
+                                                  image: DecorationImage(
+                                                      image: AssetImage(""))),
+                                              text: "9".tr,
+                                              onPressed: () {
+                                                controller.service();
+                                              },
+                                              color: Colors.white,
+                                            ),
+                                          // BottunScreen(
+                                          //   height: h * 0.35,
+                                          //   width: w * 0.65,
+                                          //   assetName:
+                                          //       ("assets/images/flixi2.png"),
+                                          //   decoration: const BoxDecoration(
+                                          //       image: DecorationImage(
+                                          //           image: AssetImage(""))),
+                                          //   text: "10".tr,
+                                          //   onPressed: () {},
+                                          //   color: Colors.white,
+                                          // ),
+                                          if (controller
+                                                  .user
+                                                  .value!
+                                                  .platformSettings
+                                                  .servicesStatus['store'] ==
+                                              'active')
+                                            BottunScreen(
+                                              height: h * 0.35,
+                                              width: w * 0.65,
+                                              assetName:
+                                                  ("assets/images/store.png"),
+                                              decoration: const BoxDecoration(
+                                                  image: DecorationImage(
+                                                      image: AssetImage(""))),
+                                              text: "11".tr,
+                                              onPressed: controller.myStore,
+                                              color: Colors.white,
+                                            ),
+                                          // BottunScreen(
+                                          //   height: h * 0.35,
+                                          //   width: w * 0.65,
+                                          //   assetName:
+                                          //       ("assets/images/programer.png"),
+                                          //   decoration: const BoxDecoration(
+                                          //       image: DecorationImage(
+                                          //           image: AssetImage(""))),
+                                          //   text: "104".tr,
+                                          //   onPressed: () {},
+                                          //   color: Colors.white,
+                                          // ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              } else {
+                                return Obx(
+                                  () => GridView(
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 2,
+                                            mainAxisSpacing: 10,
+                                            crossAxisSpacing: 10),
+                                    children: [
+                                      SizedBox(
+                                        height: h * 0.08,
+                                      ),
+                                      if (controller
+                                              .user
+                                              .value!
+                                              .platformSettings
+                                              .servicesStatus['transfers'] ==
+                                          'active')
                                         BottunScreen(
                                           height: h * 0.35,
                                           width: w * 0.65,
@@ -133,11 +244,15 @@ class Home extends StatelessWidget {
                                             ),
                                           ),
                                           text: "12".tr,
-                                          onPressed: () {
-                                            controller.echonge();
-                                          },
+                                          onPressed: controller.echonge,
                                           color: Colors.white,
                                         ),
+                                      if (controller
+                                              .user
+                                              .value!
+                                              .platformSettings
+                                              .servicesStatus['offers'] ==
+                                          'active')
                                         BottunScreen(
                                           height: h * 0.35,
                                           width: w * 0.65,
@@ -147,23 +262,26 @@ class Home extends StatelessWidget {
                                               image: DecorationImage(
                                                   image: AssetImage(""))),
                                           text: "9".tr,
-                                          onPressed: () {
-                                            controller.service();
-                                          },
+                                          onPressed: controller.service,
                                           color: Colors.white,
                                         ),
-                                        // BottunScreen(
-                                        //   height: h * 0.35,
-                                        //   width: w * 0.65,
-                                        //   assetName:
-                                        //       ("assets/images/flixi2.png"),
-                                        //   decoration: const BoxDecoration(
-                                        //       image: DecorationImage(
-                                        //           image: AssetImage(""))),
-                                        //   text: "10".tr,
-                                        //   onPressed: () {},
-                                        //   color: Colors.white,
-                                        // ),
+                                      // BottunScreen(
+                                      //   height: h * 0.35,
+                                      //   width: w * 0.65,
+                                      //   assetName: ("assets/images/flixi2.png"),
+                                      //   decoration: const BoxDecoration(
+                                      //       image: DecorationImage(
+                                      //           image: AssetImage(""))),
+                                      //   text: "10".tr,
+                                      //   onPressed: () {},
+                                      //   color: Colors.white,
+                                      // ),
+                                      if (controller
+                                              .user
+                                              .value!
+                                              .platformSettings
+                                              .servicesStatus['store'] ==
+                                          'active')
                                         BottunScreen(
                                           height: h * 0.35,
                                           width: w * 0.65,
@@ -173,103 +291,23 @@ class Home extends StatelessWidget {
                                               image: DecorationImage(
                                                   image: AssetImage(""))),
                                           text: "11".tr,
-                                          onPressed: () {
-                                            controller.MyStore();
-                                          },
+                                          onPressed: controller.myStore,
                                           color: Colors.white,
                                         ),
-                                        BottunScreen(
-                                          height: h * 0.35,
-                                          width: w * 0.65,
-                                          assetName:
-                                              ("assets/images/programer.png"),
-                                          decoration: const BoxDecoration(
-                                              image: DecorationImage(
-                                                  image: AssetImage(""))),
-                                          text: "104".tr,
-                                          onPressed: () {},
-                                          color: Colors.white,
-                                        ),
-                                      ],
-                                    ),
-                                  ]),
-                                );
-                              } else {
-                                return GridView(
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 2,
-                                          mainAxisSpacing: 10,
-                                          crossAxisSpacing: 10),
-                                  children: [
-                                    SizedBox(
-                                      height: h * 0.08,
-                                    ),
-                                    BottunScreen(
-                                      height: h * 0.35,
-                                      width: w * 0.65,
-                                      assetName: ("assets/images/chonge.png"),
-                                      decoration: const BoxDecoration(
-                                        image: DecorationImage(
-                                          image: AssetImage(""),
-                                        ),
-                                      ),
-                                      text: "12".tr,
-                                      onPressed: () {
-                                        controller.echonge();
-                                      },
-                                      color: Colors.white,
-                                    ),
-                                    BottunScreen(
-                                      height: h * 0.35,
-                                      width: w * 0.65,
-                                      assetName: ("assets/images/Service.png"),
-                                      decoration: const BoxDecoration(
-                                          image: DecorationImage(
-                                              image: AssetImage(""))),
-                                      text: "9".tr,
-                                      onPressed: () {
-                                        controller.service();
-                                      },
-                                      color: Colors.white,
-                                    ),
-                                    BottunScreen(
-                                      height: h * 0.35,
-                                      width: w * 0.65,
-                                      assetName: ("assets/images/flixi2.png"),
-                                      decoration: const BoxDecoration(
-                                          image: DecorationImage(
-                                              image: AssetImage(""))),
-                                      text: "10".tr,
-                                      onPressed: () {},
-                                      color: Colors.white,
-                                    ),
-                                    BottunScreen(
-                                      height: h * 0.35,
-                                      width: w * 0.65,
-                                      assetName: ("assets/images/store.png"),
-                                      decoration: const BoxDecoration(
-                                          image: DecorationImage(
-                                              image: AssetImage(""))),
-                                      text: "11".tr,
-                                      onPressed: () {
-                                        controller.MyStore();
-                                      },
-                                      color: Colors.white,
-                                    ),
-                                    BottunScreen(
-                                      height: h * 0.35,
-                                      width: w * 0.65,
-                                      assetName:
-                                          ("assets/images/programer.png"),
-                                      decoration: const BoxDecoration(
-                                          image: DecorationImage(
-                                              image: AssetImage(""))),
-                                      text: "104".tr,
-                                      onPressed: () {},
-                                      color: Colors.white,
-                                    ),
-                                  ],
+                                      // BottunScreen(
+                                      //   height: h * 0.35,
+                                      //   width: w * 0.65,
+                                      //   assetName:
+                                      //       ("assets/images/programer.png"),
+                                      //   decoration: const BoxDecoration(
+                                      //       image: DecorationImage(
+                                      //           image: AssetImage(""))),
+                                      //   text: "104".tr,
+                                      //   onPressed: () {},
+                                      //   color: Colors.white,
+                                      // ),
+                                    ],
+                                  ),
                                 );
                               }
                             },
@@ -338,11 +376,13 @@ class Home extends StatelessWidget {
                                                               .length -
                                                           1 -
                                                           index];
+
                                               return Card(
                                                 color: const Color.fromARGB(
                                                     255, 235, 235, 235),
                                                 child: Container(
-                                                  padding: EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
                                                       vertical: 10,
                                                       horizontal: 15),
                                                   child: Row(
@@ -350,7 +390,6 @@ class Home extends StatelessWidget {
                                                         CrossAxisAlignment
                                                             .start,
                                                     children: [
-                                                     
                                                       NetworkImageView(
                                                         url: notification
                                                             .imageUrl,
@@ -361,7 +400,7 @@ class Home extends StatelessWidget {
                                                         width: w * 0.11,
                                                         height: w * 0.11,
                                                       ),
-                                                      Gap(10),
+                                                      const Gap(10),
                                                       Flexible(
                                                         child: Column(
                                                           crossAxisAlignment:
@@ -397,7 +436,7 @@ class Home extends StatelessWidget {
                                                             if (notification
                                                                     .attachmentImageUrl !=
                                                                 null) ...[
-                                                              Gap(10),
+                                                              const Gap(10),
                                                               NetworkImageView(
                                                                 height:
                                                                     h * 0.25,

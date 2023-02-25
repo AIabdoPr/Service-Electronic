@@ -33,7 +33,6 @@ class PostGalleryView extends StatelessWidget {
         headers: Applink.imageHeaders,
         fit: BoxFit.fill,
         width: (MediaQuery.of(context).size.width - 24) / 2,
-        // ),
       );
       if (i == gridCount - 1 && i != items.length - 1) {
         gridItems.add(
@@ -41,7 +40,9 @@ class PostGalleryView extends StatelessWidget {
             onTap: () => onItemTap(i),
             child: Stack(
               children: [
-                image,
+                Positioned.fill(
+                  child: image,
+                ),
                 Positioned.fill(
                   child: Container(color: Colors.black.withOpacity(0.5)),
                 ),

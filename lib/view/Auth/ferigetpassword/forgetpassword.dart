@@ -86,11 +86,12 @@ class Forgetpassword extends StatelessWidget {
                           if (value!.isEmpty) {
                             return "2.5".tr;
                           }
-                          if (!RegExp(
-                                  r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-                              .hasMatch(value)) {
-                            return "21".tr;
-                          }
+                          if (!value.isEmail) return "23".tr;
+                          // if (!RegExp(
+                          //         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+                          //     .hasMatch(value)) {
+                          //   return "21".tr;
+                          // }
                           if (controller.errors.containsKey('email')) {
                             return controller.errors['email'];
                           }

@@ -87,7 +87,7 @@ class VewModel extends StatelessWidget {
                 ],
               ),
               if (editable) ...[
-                Spacer(),
+                const Spacer(),
                 PopupMenuButton<String>(
                   onSelected: (value) async {
                     switch (value) {
@@ -141,7 +141,7 @@ class VewModel extends StatelessWidget {
             ],
           ),
           Container(
-            margin: EdgeInsets.only(top: 10, bottom: 8),
+            margin: const EdgeInsets.only(top: 10, bottom: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -168,7 +168,7 @@ class VewModel extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Gap(5),
+                const Gap(5),
                 Text("${"75".tr} : ${product.description}",
                     style: const TextStyle(
                       fontSize: 13,
@@ -179,10 +179,11 @@ class VewModel extends StatelessWidget {
           ),
 
           //=========================صورة المنتج =============================
-          Container(
-            color: const Color.fromARGB(255, 197, 195, 195),
-            height: h * 0.4,
-            child: PostGalleryView(items: product.imagesUrils),
+          SizedBox(
+            height: 280,
+            child: PostGalleryView(
+              items: [...product.imagesUrils, ...product.imagesUrils],
+            ),
           ),
 
           if (product.likes > 0)
@@ -205,15 +206,20 @@ class VewModel extends StatelessWidget {
           Text(
             '${"33".tr} : ${product.price} DZD',
           ),
-
           const Gap(5),
-          Rate(
-            color: Colors.amberAccent,
-            readOnly: product.isRated,
-            allowHalf: true,
-            iconSize: 20,
-            initialValue: product.isRated ? 5 * product.rates : 0,
-            onChange: product.isRated ? null : (v) => onRate!(product, v),
+          Row(
+            children: [
+              Rate(
+                color: Colors.amberAccent,
+                readOnly: product.isRated,
+                allowHalf: true,
+                iconSize: 20,
+                initialValue: product.isRated ? 5 * product.rates : 0,
+                onChange: product.isRated ? null : (v) => onRate!(product, v),
+                allowClear: !product.isRated,
+              ),
+              Text('${product.rates} %')
+            ],
           ),
           const Gap(5),
           Row(

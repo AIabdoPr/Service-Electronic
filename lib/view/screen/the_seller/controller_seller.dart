@@ -3,27 +3,22 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
-import 'package:service_electronic/Data/model/user.mode.dart';
-import 'package:service_electronic/core/class/statusRequest.dart';
 import 'package:service_electronic/core/services/main.service.dart';
 import 'package:service_electronic/link_api.dart';
 import 'package:service_electronic/routes.dart';
 import 'package:service_electronic/view/widget/dialogs.view.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:storage_database/api/request.dart';
 import 'package:storage_database/api/response.dart';
 
-import '../../../core/services/auth.service.dart';
+import '../../../core/class/statusRequest.dart';
 
 class SellerController extends GetxController {
   MainService mainService = Get.find();
+  StatusRequest statusRequest = StatusRequest.loading;
   Map countries = {};
-
-  // StatusRequest statusRequest = StatusRequest.success;
 
   File? imageverification;
 
@@ -32,12 +27,10 @@ class SellerController extends GetxController {
   //============= فنكشن رفع الصور الهوية ================
   Future<void> ublodimage() async {
     final pickedImage = await ImagePicker().pickImage(
-      // TODO: set it capera source
-      source: ImageSource.gallery,
+      source: ImageSource.camera,
       imageQuality: 50,
     );
     if (pickedImage != null) {
-      // imageverification = File(pickedImage.path);
       imageverification =
           await FlutterNativeImage.compressImage(pickedImage.path, quality: 15);
     } else {}
@@ -64,7 +57,6 @@ class SellerController extends GetxController {
   late TextEditingController address;
   int verifyType = -1;
 
-  // RxMap deliveryStates = {}.obs;
   List<String> get deliveryStates => [
         for (String state
             in (countries["Algeria"]?['states'] as Map? ?? {}).keys)
@@ -89,15 +81,10 @@ class SellerController extends GetxController {
 
   addDeleveryStatePrice(DeliveryStatePrice deliveryStatePrice) {
     deliveryStatePrices[deliveryStatePrice.state] = (deliveryStatePrice);
-    // print(deliveryStates);
-    // deliveryStates.remove(deliveryStates[deliveryStatePrice.state]);
-    // print(deliveryStates);
     update();
   }
 
   removeDeleveryStatePrice(DeliveryStatePrice deliveryStatePrice) {
-    // deliveryStates[deliveryStatePrice.state] =
-    //     countries["Algeria"]['states'][deliveryStatePrice.state];
     deliveryStatePrices.remove(deliveryStatePrice.state);
     update();
   }
@@ -115,6 +102,7 @@ class SellerController extends GetxController {
         await Get.find<MainService>().storageDatabase.storageAPI!.request(
       Applink.identityVerify,
       RequestType.post,
+      log: true,
       headers: Applink.authedHeaders,
       files: [
         await http.MultipartFile.fromPath(
@@ -127,11 +115,9 @@ class SellerController extends GetxController {
         ),
       ],
     );
+
     Get.back();
     if (response.success) {
-      Get.find<AuthSerivce>().currentUser.value =
-          await UserModel.refreshUser() ??
-              Get.find<AuthSerivce>().currentUser.value;
       Get.back();
       Get.snackbar(
         "145".tr,
@@ -139,7 +125,6 @@ class SellerController extends GetxController {
         backgroundColor: Colors.white,
         icon: const Icon(Icons.notifications),
       );
-      Get.forceAppUpdate();
     } else {
       DialogsView.message(
         'Identity Verify',
@@ -177,14 +162,11 @@ class SellerController extends GetxController {
 
       Get.back();
       if (response.success) {
-        await UserModel.refreshUser();
+        Get.back();
         Get.snackbar(
           "Register Store",
           "145".tr,
-          backgroundColor: Color.fromARGB(255, 149, 250, 168),
-        );
-        Get.offNamed(
-          AppRoute.home,
+          backgroundColor: const Color.fromARGB(255, 149, 250, 168),
         );
       } else {
         if (response.errors != null) {
@@ -209,7 +191,7 @@ class SellerController extends GetxController {
         .loadString("assets/countries.json")
         .then((data) {
       countries = jsonDecode(data);
-      // deliveryStates.value = countries["Algeria"]['states'];
+      statusRequest = StatusRequest.success;
       update();
     });
     super.onInit();

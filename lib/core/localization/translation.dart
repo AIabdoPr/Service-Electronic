@@ -47,7 +47,7 @@ class MyTranslation extends Translations {
           "35": "خارج البلاد",
           "36": "السعر الاجمالي :",
           "37": "اضف منتجك",
-          "38": "حجز الكمية",
+          "38": "متابعة",
           "39": "المبلغ",
           "41": "الارسال",
           "40": "الاستقبال",
@@ -165,22 +165,23 @@ class MyTranslation extends Translations {
           "149": "الفئة",
           "150": "اشترى : ",
           "151": "الزبون : ",
-           "152": "تفاصيل",
-           "153": "اللقب",
-           "154": "اكتب سبب الرفض",
-           "155": "كلمة السر غير صحيحة",
-           "156": "حسابنا علة الجيمايل لتواصل مع الدعم",
-           "157": "حسابنا علة الفيس بوك لتواصل مع الدعم",
-           "158": "حسابنا علة التلغرام لتواصل مع الدعم",
-           "159": "دعم المنصة",
-           "160":"قبل الاتصال بفريق دعم المنصة اقراء الشروط والاحكام \n يرجا الاتصال بدعم المنصة فقط في حالة حصول مشكلة في خدمات المقدمة من المنصة وسيتم معالجة طلبك في قضون ٥  ساعات الى ٢٤ ساعة " ,
-            "161": "تم نسخ النص بنجاح",
-            "164": "لصق النص",
-            "162": "نسخ النص",
-            "163": "اعادة ارسال الكود",
+          "152": "تفاصيل",
+          "153": "اللقب",
+          "154": "اكتب سبب الرفض",
+          "155": "كلمة السر غير صحيحة",
+          "156": "حسابنا علة الجيمايل لتواصل مع الدعم",
+          "157": "حسابنا علة الفيس بوك لتواصل مع الدعم",
+          "158": "حسابنا علة التلغرام لتواصل مع الدعم",
+          "159": "دعم المنصة",
+          "160":
+              "قبل الاتصال بفريق دعم المنصة اقراء الشروط والاحكام \n يرجا الاتصال بدعم المنصة فقط في حالة حصول مشكلة في خدمات المقدمة من المنصة وسيتم معالجة طلبك في قضون ٥  ساعات الى ٢٤ ساعة ",
+          "161": "تم نسخ النص بنجاح",
+          "164": "لصق النص",
+          "162": "نسخ النص",
+          "163": "اعادة ارسال الكود",
           //============================ شروط ولاحكام ==============================================================================================================================================
           "300":
-              "هذه الشروط والأحكام، بالإضافة إلى أي وجميع الوثائق الأخرى المشار إليها، تحدد الشروط التي يمكنك بموجبهااستخدم هذا الموقع الإلكتروني،www.Service ecteronec.com، (“موقعنا”).تعتبر موافقتك على الامتثال لهذه الشروط والأحكام والالتزام بها أمرًا واقعًا منذ استخدامك لموقعنا للمرة الأولى. إذا لم تكن موافقًا على الامتثال والالتزام بتلك الشروط والأحكام، ينبغي عليك التوقف عن استخدام موقعنا فورًا.",
+              "هذه الشروط والأحكام، بالإضافة إلى أي وجميع الوثائق الأخرى المشار إليها، تحدد الشروط التي يمكنك بموجبهااستخدم هذا التطبيق.تعتبر موافقتك على الامتثال لهذه الشروط والأحكام والالتزام بها أمرًا واقعًا منذ استخدامك لموقعنا للمرة الأولى. إذا لم تكن موافقًا على الامتثال والالتزام بتلك الشروط والأحكام، ينبغي عليك التوقف عن استخدام موقعنا فورًا.",
           "301": "شروط واحكام الموقع",
           "302": "التعريف بالمحتوى",
           "303":
@@ -196,7 +197,10 @@ class MyTranslation extends Translations {
           "308":
               "لرصيدك على المنصة دور مهم ومهم جدا فهو يسهل عليك التعاملات داخل المنصة ويضمن لك كل اموالك ويسرع عملية الشرء من داخل المنصة لكونه لذيه لولوية في التعاملات كما يمكن سحبه في اي وقت وارساله في اي وقت تشاء الى حساب اخر على المنصة \n كيفية شحن الرصيد : لذيك طريقتين لشحن رصيدك على المنصة \n 1  عن طريق بريد الجزائر بعملة دج (DZD ): ولهذا الاجراء شورط محددة \n اول شرط : تحدد كمية المبلغ المراد ارساله \n تاني شرط : تقوم بالتقاط صورة للوصل على المباشر وتقوم برفعها \n ثالث شرط : تنتظر فترة التحقق من الوصل و المبلغ المرسل وهذه الفترة محصورة من (1دقيقة الى 24ساعة ) \n 2 عن طريق بايسيرا بعملة الاورو (€) : ولهذا الاجراء شروط محددة \n اول شرط : تحديد الكمية المبلغ المراد ارساله\n تاني شرط : تقوم برفع صورة الوصل لشاشة العملية \n ثالث شرط : تنتظر فترة التحقق من الوصل و المبلغ المرسل وهذه الفترة محصورة من (1دقيقة الى 3ساعات) ",
           "309": "رصيدك على المنصة",
+          'balance': ' {balance} دج '
           //==========================================================================================================================================================================================================
+          ,
+          'Accept': 'أوافق',
         },
         "en": {
           "0": "sign out",
@@ -242,7 +246,7 @@ class MyTranslation extends Translations {
           "35": "Outside of country",
           "36": "Total Price :",
           "37": "Add your product",
-          "38": "Quantity Reservation",
+          "38": "Submit",
           "39": "Balance",
           "41": "Give",
           "40": "Take",
@@ -369,14 +373,16 @@ class MyTranslation extends Translations {
           "157": "Our Facebook account to communicate",
           "158": "Our account on Telegram to communicate",
           "159": "Platform support",
-          "160": "Before contacting the platform support team, read the terms and conditions \n Please contact the support of the platform only in the event of a problem with the services provided by the platform, and your request will be processed within 5 hours to 24 hours",
-           "161": "Text copied Successfully",
-           "164": "Paste a code",
-           "162": "Copy text",
-           "163": "Renvoyer le code",
+          "160":
+              "Before contacting the platform support team, read the terms and conditions \n Please contact the support of the platform only in the event of a problem with the services provided by the platform, and your request will be processed within 5 hours to 24 hours",
+          "161": "Text copied Successfully",
+          "164": "Paste a code",
+          "162": "Copy text",
+          "163": "Renvoyer le code",
           //============== شروط ولاحكام ===================================================================================================================================================================
           "300":
-              "These Terms and Conditions, together with any and all other documents referred to, set out the terms under which you may use this website, www.Service electronec.com, (“Our Website”).Your agreement to comply with and be bound by these Terms and Conditions is operative since your first use of our Website. If you do not agree to comply with and be bound by these terms and conditions, you should stop using our site immediately.",
+              // "These Terms and Conditions, together with any and all other documents referred to, set out the terms under which you may use this website, www.Service electronec.com, (“Our Website”).Your agreement to comply with and be bound by these Terms and Conditions is operative since your first use of our Website. If you do not agree to comply with and be bound by these terms and conditions, you should stop using our site immediately.",
+              "These Terms and Conditions, together with any and all other documents referred to, set out the terms under which you may conect us.Your agreement to comply with and be bound by these Terms and Conditions is operative since your first use of our Website. If you do not agree to comply with and be bound by these terms and conditions, you should stop using our site immediately.",
           "301": "Site terms and conditions",
           "302": "Definition of content",
           "303":
@@ -393,6 +399,7 @@ class MyTranslation extends Translations {
               "Your balance on the platform has an important and very important role, as it facilitates transactions within the platform and guarantees you all your money and speeds up the purchase process from within the platform because it has priority in transactions. It can also be withdrawn at any time and sent at any time you want to another account on the platform.How to charge the balance: You have two ways to charge your balance on the platform \n1 Via CCP in DZD: This procedure has specific conditions \n The first condition: specify the amount of money to be sent \n The second condition: you take a picture of the direct link and upload it \n The third condition: waiting for the verification period of the receipt and the amount sent, and this period is limited From (1 minute to 24 hours) \n 2 Via PAYSSERA in the euro currency (€): This procedure has specific conditions \n The first condition: specifying the quantity of the amount to be sent \n The second condition: you upload the link image to the process screen \n Third condition: waiting for the verification period of the receipt and the amount sent, and this period is limited From (1 minute to 3 hours)",
           "309": "Your balance on the platform",
           //=================================================================================================================================================================================================
+          'balance': '{balance} DZD',
         },
       };
 }

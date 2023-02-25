@@ -69,6 +69,15 @@ class OfferRequestModel {
     } catch (e) {}
     return getAll();
   }
+
+  static Stream<List<OfferRequestModel>> stream() {
+    loadAll();
+    return collection
+        .stream()
+        .asyncExpand<List<OfferRequestModel>>((items) async* {
+      yield allFromMap(items);
+    });
+  }
 }
 
 class OfferRequestStatus {
@@ -109,4 +118,9 @@ class OfferRequestStatus {
   };
 
   static OfferRequestStatus fromString(status) => values[status]!;
+
+  bool get isWaitingAdminAccept => status == waitingAdminAccept.status;
+  bool get isAdminAccept => status == adminAccept.status;
+  bool get isReceived => status == received.status;
+  bool get isAdminRefused => status == adminRefuse.status;
 }

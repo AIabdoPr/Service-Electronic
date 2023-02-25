@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../../link_api.dart';
+import '../../../widget/image_picker_field.view.dart';
 import '../../../widget/network_image.view.dart';
 
 class AddProduct extends StatelessWidget {
@@ -142,7 +143,9 @@ class AddProduct extends StatelessWidget {
                                     top: 20,
                                   ),
                                   child: Text(
-                                    "37".tr,
+                                    controller.action == 'Edit'
+                                        ? 'Edit your product'
+                                        : "37".tr,
                                     style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -241,7 +244,7 @@ class AddProduct extends StatelessWidget {
                                   margin: const EdgeInsets.only(
                                       bottom: 15, left: 50, right: 30),
                                   child: Text(
-                                    "${"124".tr} ${user.platformSettings.commisstion}% \n${"36".tr} ${controller.totalPrice} DZD",
+                                    "${"124".tr} ${user.platformSettings.commisstion}% \n${"36".tr} ${controller.totalPrice} DZD${controller.action == 'Edit' ? '\nOld Price: ${controller.oldProudct!.price} DZD' : ''}",
                                   ),
                                 ),
                                 Container(
@@ -298,43 +301,52 @@ class AddProduct extends StatelessWidget {
                                 Text(
                                   "77".tr,
                                 ),
-                                Container(
-                                  margin: const EdgeInsets.only(top: 15),
-                                  color:
-                                      const Color.fromARGB(255, 190, 189, 189),
-                                  width: w * 0.8,
-                                  height: h * 0.25,
-                                  child: Flex(
-                                    direction: Axis.vertical,
-                                    children: [
-                                      const SizedBox(height: 20),
-                                      ElevatedButton(
-                                        onPressed: controller.pickImages,
-                                        child: const Text('select images'),
-                                      ),
-                                      Flexible(
-                                        child: ListView.builder(
-                                          itemCount: controller.images.length,
-                                          itemBuilder: (context, index) {
-                                            File file =
-                                                controller.images[index];
-                                            return ListTile(
-                                              leading: Image.file(file),
-                                              subtitle: Text(
-                                                  '${(file.lengthSync() / 1024).toStringAsFixed(2)} KB'),
-                                              onTap: () {
-                                                Get.to(
-                                                  ImagePreview(
-                                                    image: file,
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          },
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                // Container(
+                                //   margin: const EdgeInsets.only(top: 15),
+                                //   color:
+                                //       const Color.fromARGB(255, 190, 189, 189),
+                                //   width: w * 0.8,
+                                //   height: h * 0.25,
+                                //   child: Flex(
+                                //     direction: Axis.vertical,
+                                //     children: [
+                                //       const SizedBox(height: 20),
+                                //       ElevatedButton(
+                                //         onPressed: controller.pickImages,
+                                //         child: const Text('select images'),
+                                //       ),
+                                //       Flexible(
+                                //         child: ListView.builder(
+                                //           itemCount: controller.images.length,
+                                //           itemBuilder: (context, index) {
+                                //             File file =
+                                //                 controller.images[index];
+                                //             return ListTile(
+                                //               leading: Image.file(file),
+                                //               subtitle: Text(
+                                //                   '${(file.lengthSync() / 1024).toStringAsFixed(2)} KB'),
+                                //               onTap: () {
+                                //                 Get.to(
+                                //                   ImagePreview(
+                                //                     image: file,
+                                //                   ),
+                                //                 );
+                                //               },
+                                //             );
+                                //           },
+                                //         ),
+                                //       )
+                                //     ],
+                                //   ),
+                                // ),
+
+                                ImagePickerFieldView(
+                                  images: controller.images,
+                                  onPick: controller.pickImages,
+                                  onRemove: (image) {
+                                    controller.images.remove(image);
+                                    controller.update();
+                                  },
                                 ),
                                 if (!controller.validateImages ||
                                     controller.errors.containsKey('images'))

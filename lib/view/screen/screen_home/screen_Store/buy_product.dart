@@ -26,12 +26,11 @@ class Store2 extends StatelessWidget {
                   )
                 : Scaffold(
                     appBar: AppBar(
-                      backgroundColor:const Color.fromARGB(255, 59, 214, 131),
-                      title:  Text(
-                          "11".tr,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      
+                      backgroundColor: const Color.fromARGB(255, 59, 214, 131),
+                      title: Text(
+                        "11".tr,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                     body: SizedBox(
                       height: h,
@@ -60,6 +59,7 @@ class Store2 extends StatelessWidget {
                                   right: 20, left: 20, top: 20, bottom: 5),
                               child: myTextFormField(
                                 enabled: true,
+                                textType: TextInputType.phone,
                                 mycontroller: controller.phone,
                                 valid: (v) {},
                                 labeltext: "15".tr,
@@ -82,6 +82,7 @@ class Store2 extends StatelessWidget {
                                     return "count must be not 0";
                                   }
                                 },
+                                onChanged: (_) => controller.update(),
                                 labeltext: "142".tr,
                                 iconData: Icons.numbers,
                                 hintText: "142".tr,
@@ -147,6 +148,10 @@ class Store2 extends StatelessWidget {
                                       color: Colors.black, width: 1.5),
                                 ),
                                 child: DropdownButtonFormField<String>(
+                                  style: TextStyle(
+                                    overflow: TextOverflow.ellipsis,
+                                    color: Colors.black,
+                                  ),
                                   validator: (value) {
                                     if (value == '-1') {
                                       return "اختر احد العناصر ";
@@ -171,8 +176,9 @@ class Store2 extends StatelessWidget {
                                     )
                                   ],
                                   onChanged: (val) {
-                                    if (val != null)
+                                    if (val != null) {
                                       controller.changeDeliveryType(val);
+                                    }
                                   },
                                   value: controller.deliveryType,
                                 ),
@@ -240,16 +246,24 @@ class Store2 extends StatelessWidget {
                                       SizedBox(
                                         width: w * 0.02,
                                       ),
-                                      Text(
-                                        '${'122'.tr} : ${Get.find<AuthSerivce>().currentUser.value!.balance} DZD',
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                      SizedBox(
+                                        width: w * 0.8,
+                                        child: FittedBox(
+                                          child: Text(
+                                            '${'122'.tr} : ${Get.find<AuthSerivce>().currentUser.value!.balance} DZD',
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),
-                                const  Gap(5),
+                                  const Gap(5),
                                   if (controller.balanceInvalid)
-                                    Text('148'.tr,style:const TextStyle(color: Colors.red),)
+                                    Text(
+                                      '148'.tr,
+                                      style: const TextStyle(color: Colors.red),
+                                    )
                                 ],
                               ),
                             ),
@@ -257,7 +271,8 @@ class Store2 extends StatelessWidget {
                                 margin: const EdgeInsets.only(
                                     left: 30, right: 30, top: 30, bottom: 50),
                                 child: myMaterialButton(
-                                  color:const Color.fromARGB(255, 59, 214, 131),
+                                  color:
+                                      const Color.fromARGB(255, 59, 214, 131),
                                   onPressed: controller.buyProduct,
                                   text: "52".tr,
                                   style: const TextStyle(

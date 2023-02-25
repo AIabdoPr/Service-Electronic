@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../core/localization/localiztioncontroller.dart';
 
 class DeliverySteperView extends StatefulWidget {
   final List<DeliveryStep> steps;
@@ -25,6 +28,10 @@ class _DeliverySteperViewState extends State<DeliverySteperView> {
   @override
   Widget build(BuildContext context) {
     int stepsCount = widget.steps.length;
+    TextDirection textDirection =
+        Get.find<LocaleController>().language.languageCode == 'en'
+            ? TextDirection.ltr
+            : TextDirection.rtl;
     return Container(
       padding: widget.padding,
       margin: widget.margin,
@@ -42,24 +49,27 @@ class _DeliverySteperViewState extends State<DeliverySteperView> {
             ),
             for (int index = 0; index <= widget.currentStep; index++) ...[
               if (index == widget.currentStep)
-                Positioned(
+                Positioned.directional(
+                  textDirection: textDirection,
                   width: 32,
                   height: 32,
-                  left: 4.6,
+                  start: 4.6,
                   top: widget.size.height / stepsCount * index + 5,
                   child: ElevatedButton(
                     onPressed:
                         isChangingStep || widget.steps[index].onNext == null
                             ? null
                             : () async {
-                                setState(() => isChangingStep = true);
-                                await widget.steps[index].onNext!();
-                                setState(() => isChangingStep = false);
+                                try {
+                                  setState(() => isChangingStep = true);
+                                  await widget.steps[index].onNext!();
+                                  setState(() => isChangingStep = false);
+                                } catch (e) {}
                               },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
                           widget.steps[index].onNext == null
-                              ? Color.fromARGB(255, 74, 247, 146)
+                              ? const Color.fromARGB(255, 74, 247, 146)
                               : Colors.red),
                       padding: MaterialStateProperty.all(EdgeInsets.zero),
                       shape: MaterialStateProperty.all(
@@ -74,7 +84,7 @@ class _DeliverySteperViewState extends State<DeliverySteperView> {
                             height: 15,
                             child: CircularProgressIndicator(
                               color: widget.steps[index].onNext == null
-                                  ? Color.fromARGB(255, 130, 130, 130)
+                                  ? const Color.fromARGB(255, 130, 130, 130)
                                   : Colors.white,
                               strokeWidth: 2,
                             ),
@@ -86,11 +96,13 @@ class _DeliverySteperViewState extends State<DeliverySteperView> {
                             ),
                   ),
                 ),
-              Positioned(
-                left: widget.size.width / 2 + 20,
+              Positioned.directional(
+                textDirection: textDirection,
+                start: widget.size.width / 2 + 20,
                 top: widget.size.height / stepsCount * index + 15,
                 child: Text(
-                    '${widget.steps[index].name}: ${widget.steps[index].detail ?? '...'}'),
+                  '${widget.steps[index].name.tr}: ${widget.steps[index].detail ?? '...'}',
+                ),
               )
             ]
           ],

@@ -10,6 +10,7 @@ import 'package:service_electronic/core/services/main.service.dart';
 
 import '../../../../Data/model/exchange.model.dart';
 import '../../../../core/class/statusRequest.dart';
+import '../../../../core/services/notifiction.service.dart';
 
 class HomeCart extends StatelessWidget {
   const HomeCart({
@@ -45,7 +46,7 @@ class HomeCart extends StatelessWidget {
                       text: "Withdraws",
                     ),
                     Tab(
-                      icon: Icon(Icons.multiple_stop_outlined ),
+                      icon: Icon(Icons.multiple_stop_outlined),
                       text: "Transfers",
                     ),
                   ],
@@ -56,17 +57,17 @@ class HomeCart extends StatelessWidget {
                       child: Lottie.asset("assets/lottie/loading1.json",
                           height: 80, width: 90),
                     )
-                  : RefreshIndicator(
-                      onRefresh: controller.getTransfers,
-                      child: TabBarView(
-                        children: [
-                          ListView.builder(
+                  : TabBarView(
+                      children: [
+                        RefreshIndicator(
+                          onRefresh: controller.getTransfers,
+                          child: ListView.builder(
                               itemCount: controller.recharges.length,
                               itemBuilder: (context, index) {
                                 TransferModel transfer = controller
                                     .recharges.reversed
                                     .toList()[index];
-                                return Container(
+                                return SizedBox(
                                   width: w,
                                   child: Container(
                                       margin: const EdgeInsets.only(
@@ -84,57 +85,71 @@ class HomeCart extends StatelessWidget {
                                               ),
                                             ),
                                             const Gap(5),
-                                              Text(DateFormat('yyyy-MM-dd HH:mm').format(transfer.createdAt)),
-                                           
+                                            Text(DateFormat('yyyy-MM-dd HH:mm')
+                                                .format(transfer.createdAt)),
                                           ],
                                         ),
                                         Container(
                                           margin: const EdgeInsets.symmetric(
                                               vertical: 8),
-                                          child: Row(
+                                          child: Column(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
-                                            // textDirection: TextDirection.ltr,
                                             children: [
-                                              FittedBox(
-                                                child: Text(
-                                                  transfer.sendedCurrency.name,
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      color: Colors.blue),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: w * 0.02,
-                                              ),
-                                              FittedBox(
-                                                  child: Text(
-                                                      "${transfer.sendedBalance}"
-                                                          .tr,
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  FittedBox(
+                                                    child: Text(
+                                                      transfer
+                                                          .sendedCurrency.name,
                                                       style: const TextStyle(
                                                           fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              249,
-                                                              3,
-                                                              3)))),
-                                              SizedBox(
-                                                width: w * 0.01,
+                                                              FontWeight.w700,
+                                                          color: Colors.blue),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: w * 0.02,
+                                                  ),
+                                                  FittedBox(
+                                                      child: Text(
+                                                          "${transfer.sendedBalance}"
+                                                              .tr,
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          249,
+                                                                          3,
+                                                                          3)))),
+                                                  SizedBox(
+                                                    width: w * 0.01,
+                                                  ),
+                                                  FittedBox(
+                                                      child: Text(
+                                                          transfer
+                                                              .sendedCurrency
+                                                              .char
+                                                              .tr,
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          247,
+                                                                          4,
+                                                                          4)))),
+                                                ],
                                               ),
-                                              FittedBox(
-                                                  child: Text(
-                                                      transfer.sendedCurrency
-                                                          .char.tr,
-                                                      style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              247,
-                                                              4,
-                                                              4)))),
                                               SizedBox(
                                                 width: w * 0.01,
                                               ),
@@ -146,40 +161,48 @@ class HomeCart extends StatelessWidget {
                                               SizedBox(
                                                 width: w * 0.01,
                                               ),
-                                              FittedBox(
-                                                child: Text(
-                                                  transfer
-                                                      .receivedCurrency.name.tr,
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.green),
-                                                ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  FittedBox(
+                                                    child: Text(
+                                                      transfer.receivedCurrency
+                                                          .name.tr,
+                                                      style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.green),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: w * 0.01,
+                                                  ),
+                                                  FittedBox(
+                                                      child: Text(
+                                                    "${transfer.receivedBalance}"
+                                                        .tr,
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Color.fromARGB(
+                                                            255, 2, 152, 7)),
+                                                  )),
+                                                  SizedBox(
+                                                    width: w * 0.01,
+                                                  ),
+                                                  FittedBox(
+                                                      child: Text(
+                                                    transfer.receivedCurrency
+                                                        .char.tr,
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Color.fromARGB(
+                                                            255, 0, 170, 6)),
+                                                  )),
+                                                ],
                                               ),
-                                              SizedBox(
-                                                width: w * 0.01,
-                                              ),
-                                              FittedBox(
-                                                  child: Text(
-                                                "${transfer.receivedBalance}"
-                                                    .tr,
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color.fromARGB(
-                                                        255, 2, 152, 7)),
-                                              )),
-                                              SizedBox(
-                                                width: w * 0.01,
-                                              ),
-                                              FittedBox(
-                                                  child: Text(
-                                                transfer
-                                                    .receivedCurrency.char.tr,
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color.fromARGB(
-                                                        255, 0, 170, 6)),
-                                              )),
                                             ],
                                           ),
                                         ),
@@ -189,12 +212,15 @@ class HomeCart extends StatelessWidget {
                                       ])),
                                 );
                               }),
-                          ListView.builder(
+                        ),
+                        RefreshIndicator(
+                          onRefresh: controller.getTransfers,
+                          child: ListView.builder(
                             itemCount: controller.withdraws.length,
                             itemBuilder: (context, index) {
                               TransferModel transfer =
                                   controller.withdraws.reversed.toList()[index];
-                              return Container(
+                              return SizedBox(
                                 width: w,
                                 child: Container(
                                     margin: const EdgeInsets.only(
@@ -212,50 +238,66 @@ class HomeCart extends StatelessWidget {
                                             ),
                                           ),
                                           const Gap(5),
-                                            Text(DateFormat('yyyy-MM-dd HH:mm').format(transfer.createdAt)),
-                                            
+                                          Text(DateFormat('yyyy-MM-dd HH:mm')
+                                              .format(transfer.createdAt)),
                                         ],
                                       ),
                                       Container(
                                         margin: const EdgeInsets.symmetric(
                                             vertical: 8),
-                                        child: Row(
+                                        child: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           // textDirection: TextDirection.ltr,
                                           children: [
-                                            FittedBox(
-                                              child: Text(
-                                                transfer.sendedCurrency.name,
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.w700,
-                                                    color: Colors.blue),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: w * 0.02,
-                                            ),
-                                            FittedBox(
-                                                child: Text(
-                                                    "${transfer.sendedBalance}"
-                                                        .tr,
-                                                    style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Color.fromARGB(
-                                                            255, 249, 3, 3)))),
-                                            SizedBox(
-                                              width: w * 0.01,
-                                            ),
-                                            FittedBox(
-                                                child: Text(
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                FittedBox(
+                                                  child: Text(
                                                     transfer
-                                                        .sendedCurrency.char.tr,
+                                                        .sendedCurrency.name,
                                                     style: const TextStyle(
                                                         fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Color.fromARGB(
-                                                            255, 247, 4, 4)))),
+                                                            FontWeight.w700,
+                                                        color: Colors.blue),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: w * 0.02,
+                                                ),
+                                                FittedBox(
+                                                    child: Text(
+                                                        "${transfer.sendedBalance}"
+                                                            .tr,
+                                                        style: const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    249,
+                                                                    3,
+                                                                    3)))),
+                                                SizedBox(
+                                                  width: w * 0.01,
+                                                ),
+                                                FittedBox(
+                                                    child: Text(
+                                                        transfer.sendedCurrency
+                                                            .char.tr,
+                                                        style: const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    247,
+                                                                    4,
+                                                                    4)))),
+                                              ],
+                                            ),
                                             SizedBox(
                                               width: w * 0.01,
                                             ),
@@ -267,37 +309,48 @@ class HomeCart extends StatelessWidget {
                                             SizedBox(
                                               width: w * 0.01,
                                             ),
-                                            FittedBox(
-                                              child: Text(
-                                                transfer
-                                                    .receivedCurrency.name.tr,
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.green),
-                                              ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                FittedBox(
+                                                  child: Text(
+                                                    transfer.receivedCurrency
+                                                        .name.tr,
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.green),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: w * 0.01,
+                                                ),
+                                                FittedBox(
+                                                    child: Text(
+                                                  "${transfer.receivedBalance}"
+                                                      .tr,
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Color.fromARGB(
+                                                          255, 2, 152, 7)),
+                                                )),
+                                                SizedBox(
+                                                  width: w * 0.01,
+                                                ),
+                                                FittedBox(
+                                                    child: Text(
+                                                  transfer
+                                                      .receivedCurrency.char.tr,
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Color.fromARGB(
+                                                          255, 0, 170, 6)),
+                                                )),
+                                              ],
                                             ),
-                                            SizedBox(
-                                              width: w * 0.01,
-                                            ),
-                                            FittedBox(
-                                                child: Text(
-                                              "${transfer.receivedBalance}".tr,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Color.fromARGB(
-                                                      255, 2, 152, 7)),
-                                            )),
-                                            SizedBox(
-                                              width: w * 0.01,
-                                            ),
-                                            FittedBox(
-                                                child: Text(
-                                              transfer.receivedCurrency.char.tr,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Color.fromARGB(
-                                                      255, 0, 170, 6)),
-                                            )),
                                           ],
                                         ),
                                       ),
@@ -308,12 +361,15 @@ class HomeCart extends StatelessWidget {
                               );
                             },
                           ),
-                          ListView.builder(
+                        ),
+                        RefreshIndicator(
+                          onRefresh: controller.getTransfers,
+                          child: ListView.builder(
                             itemCount: controller.transfers.length,
                             itemBuilder: (context, index) {
                               ExchangeModel transfer =
                                   controller.transfers.reversed.toList()[index];
-                              return Container(
+                              return SizedBox(
                                 width: w,
                                 child: Container(
                                   alignment: Alignment.centerLeft,
@@ -336,10 +392,8 @@ class HomeCart extends StatelessWidget {
                                             ),
                                           ),
                                           const Gap(5),
-                                          Text(
-                                            DateFormat('yyyy-MM-dd HH:mm')
-                                              .format(transfer.sendedAt)
-                                              ),
+                                          Text(DateFormat('yyyy-MM-dd HH:mm')
+                                              .format(transfer.sendedAt)),
                                         ],
                                       ),
                                       Text.rich(
@@ -354,8 +408,7 @@ class HomeCart extends StatelessWidget {
                                             ),
                                             TextSpan(
                                               text:
-                                                  "  ${transfer.sendedBalance} ${controller.platformCurrency.char.tr}"
-                                                      .tr,
+                                                  "  ${transfer.sendedBalance} ${controller.platformCurrency.char.tr} \n ${transfer.fromEmail}",
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: Color.fromARGB(
@@ -364,6 +417,7 @@ class HomeCart extends StatelessWidget {
                                             )
                                           ],
                                         ),
+                                        textAlign: TextAlign.center,
                                       ),
                                       Gap(w * 0.01),
                                       const Icon(
@@ -383,14 +437,14 @@ class HomeCart extends StatelessWidget {
                                             ),
                                             TextSpan(
                                                 text:
-                                                    "  ${transfer.sendedBalance} ${controller.platformCurrency.char.tr}"
-                                                        .tr,
+                                                    "  ${transfer.sendedBalance} ${controller.platformCurrency.char.tr}  \n ${transfer.toEmail}",
                                                 style: const TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     color: Color.fromARGB(
                                                         255, 2, 152, 7)))
                                           ],
                                         ),
+                                        textAlign: TextAlign.center,
                                       ),
                                       const Divider(thickness: 5),
                                     ],
@@ -399,8 +453,8 @@ class HomeCart extends StatelessWidget {
                               );
                             },
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
             ),
           );

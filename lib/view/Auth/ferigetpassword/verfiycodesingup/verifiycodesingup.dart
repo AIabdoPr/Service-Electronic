@@ -7,8 +7,6 @@ import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
-import '../../../../controller/controleer_signup.dart';
-
 class Verificodesingup extends StatelessWidget {
   Verificodesingup({Key? key}) : super(key: key);
 
@@ -18,13 +16,10 @@ class Verificodesingup extends StatelessWidget {
     final h = MediaQuery.of(context).size.height;
     final w = MediaQuery.of(context).size.width;
 
-    Get.put(VerficodesingupCntrollerInp());
-    final signupController controller =
-        Get.put(signupController(), permanent: true);
     return Scaffold(
-        body: GetBuilder<VerficodesingupCntrollerInp>(
-      init: VerficodesingupCntrollerInp(),
-      builder: ((verificodesingup) => verificodesingup.statusRequest ==
+        body: GetBuilder<VerficodesingupController>(
+      init: VerficodesingupController(),
+      builder: ((controller) => controller.statusRequest ==
               StatusRequest.loading
           ? Center(
               child: Lottie.asset("assets/lottie/loading1.json",
@@ -77,7 +72,7 @@ class Verificodesingup extends StatelessWidget {
                       borderRadius: const BorderRadius.all(Radius.circular(15)),
                       numberOfFields: 6,
                       borderColor: Colors.black,
-                      
+
                       //set to true to show as box or false to show as dash
                       showFieldAsBox: true,
                       //runs when a code is typed in
@@ -85,43 +80,49 @@ class Verificodesingup extends StatelessWidget {
                           this.controllers = controllers,
                       //runs when every textfield is filled
                       onSubmit: (String verfycodesingup) {
-                        verificodesingup.verifaycodesingup(verfycodesingup);
+                        controller.verifaycodesingup(verfycodesingup);
                       }, // end onSubmit
                     ),
                     ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                                Color.fromARGB(255, 233, 233, 233))),
-                        onPressed: () async {
-                          ClipboardData? cdata =
-                              await Clipboard.getData(Clipboard.kTextPlain);
-                          if (cdata != null &&
-                              cdata.text != null &&
-                              cdata.text!.length == 6 &&
-                              int.tryParse(cdata.text!) != null) {
-                            for (int i = 0; i < cdata.text!.length; i++) {
-                              controllers[i]?.text =
-                                  cdata.text!.substring(i, i + 1);
-                            }
-                            // await Future.delayed(Duration(milliseconds: 500));
-                            verificodesingup.verifaycodesingup(cdata.text!);
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                              Color.fromARGB(255, 233, 233, 233))),
+                      onPressed: () async {
+                        ClipboardData? cdata =
+                            await Clipboard.getData(Clipboard.kTextPlain);
+                        if (cdata != null &&
+                            cdata.text != null &&
+                            cdata.text!.length == 6 &&
+                            int.tryParse(cdata.text!) != null) {
+                          for (int i = 0; i < cdata.text!.length; i++) {
+                            controllers[i]?.text =
+                                cdata.text!.substring(i, i + 1);
                           }
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '164'.tr,
-                              style:const TextStyle(color: Colors.black),
-                            ),
-                           const Gap(5),
-                           const Icon(Icons.link, color: Colors.black)
-                          ],
-                        ),),
-                        InkWell(onTap: () {
-                          
-                        },
-                          child:Text("163".tr,style:const TextStyle(color: Colors.blue,fontSize: 16,),))
+                          // await Future.delayed(Duration(milliseconds: 500));
+                          controller.verifaycodesingup(cdata.text!);
+                        }
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '164'.tr,
+                            style: const TextStyle(color: Colors.black),
+                          ),
+                          const Gap(5),
+                          const Icon(Icons.link, color: Colors.black)
+                        ],
+                      ),
+                    ),
+                    InkWell(
+                        onTap: controller.resendEmail,
+                        child: Text(
+                          "163".tr,
+                          style: const TextStyle(
+                            color: Colors.blue,
+                            fontSize: 16,
+                          ),
+                        ))
                   ],
                 ),
               ]),

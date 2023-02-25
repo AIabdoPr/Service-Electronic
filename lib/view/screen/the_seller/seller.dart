@@ -1,14 +1,11 @@
-import 'package:gap/gap.dart';
-import 'package:service_electronic/Data/datasores/contries.dart';
-import 'package:service_electronic/core/class/statusRequest.dart';
+import 'package:lottie/lottie.dart';
 import 'package:service_electronic/core/constant/bottun.dart';
 import 'package:service_electronic/core/constant/castomTextFormField.dart';
 import 'package:service_electronic/view/screen/the_seller/controller_seller.dart';
-import 'package:service_electronic/view/widget/dropdown.view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
-import 'package:lottie/lottie.dart';
+
+import '../../../core/class/statusRequest.dart';
 
 class Seller extends StatelessWidget {
   const Seller({super.key});
@@ -30,185 +27,205 @@ class Seller extends StatelessWidget {
       body: GetBuilder<SellerController>(
         init: SellerController(),
         builder: (controller) {
-          return Form(
-            key: controller.sellerVerifiction,
-            child: ListView(
-              children: [
-                SizedBox(height: h * 0.04),
-                Container(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  margin: const EdgeInsets.only(top: 30, left: 30, right: 30),
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(12)),
-                    border: Border.all(color: Colors.black, width: 0.5),
-                  ),
-                  child: DropdownButtonFormField<String>(
-                    borderRadius: BorderRadius.circular(12),
-                    validator: (value) {
-                      if (value == '-1') {
-                        return "147".tr;
-                      }
-                    },
-                    icon: const Icon(
-                      Icons.location_on,
-                      color: Colors.green,
-                    ),
-                    items: [
-                      DropdownMenuItem(
-                        value: "-1",
-                        child: Text("125".tr),
-                      ),
-                      for (String country in controller.countries.keys)
-                        DropdownMenuItem(
-                          value: country,
-                          child: Text(
-                            controller.countries[country]['name'],
-                          ),
-                        )
-                    ],
-                    onChanged: (val) {
-                      if (val != null) controller.changeCountry(val);
-                    },
-                    value: controller.slectedCountry.value,
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  margin: const EdgeInsets.only(
-                      bottom: 5, top: 30, left: 30, right: 30),
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(12)),
-                    border: Border.all(color: Colors.black, width: 0.5),
-                  ),
-                  child: DropdownButtonFormField<String>(
-                    validator: (value) {
-                      if (value == '-1') {
-                        return "147".tr;
-                      }
-                    },
-                    icon: const Icon(
-                      Icons.location_on,
-                      color: Colors.green,
-                    ),
-                    items: [
-                      DropdownMenuItem(
-                        value: '-1',
-                        child: Text("117".tr),
-                      ),
-                      if (controller.slectedCountry.value != '-1')
-                        for (String state in controller
-                            .countries[controller.slectedCountry.value]
-                                ['states']
-                            .keys)
-                          DropdownMenuItem(
-                            value: state,
-                            child: Text(
-                              state,
-                            ),
-                          )
-                    ],
-                    onChanged: (val) {
-                      if (val != null) controller.changeState(val);
-                    },
-                    value: controller.slectedState.value,
-                  ),
-                ),
-                if (controller.slectedState.value != '-1')
-                  Container(
-                    margin: const EdgeInsets.only(left: 30, right: 30, top: 10),
-                    child: myTextFormField(
-                      mycontroller: controller.address,
-                      labeltext: "114".tr,
-                      iconData: Icons.location_on,
-                      hintText: "115".tr,
-                      valid: (value) {
-                        if (value!.isEmpty) {
-                          return "18".tr;
-                        } else if (controller.errors
-                            .containsKey('store_address')) {
-                          return controller.errors['store_address'];
-                        }
-                      },
-                      enabled: true,
-                      border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(20))),
-                    ),
-                  ),
-                Container(
-                  margin: const EdgeInsets.only(top: 30, left: 30, right: 30),
-                  child: myTextFormField(
-                    mycontroller: controller.nemstore,
-                    labeltext: "80".tr,
-                    iconData: Icons.store,
-                    hintText: "126".tr,
-                    valid: (value) {
-                      if (value!.isEmpty) {
-                        return "18".tr;
-                      } else if (controller.errors.containsKey('store_name')) {
-                        return controller.errors['store_name'];
-                      }
-                    },
-                    enabled: true,
-                    border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
-                  ),
-                ),
-                AddDeliveryPriceForm(
-                  deliveryStates: controller.deliveryStates,
-                  onAdd: controller.addDeleveryStatePrice,
-                ),
-                Container(
-                  height: h * 0.4,
-                  width: w * 0.9,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 160, 244, 163),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: controller.errors.containsKey('delivery_prices')
-                          ? Colors.red
-                          : Colors.grey,
-                      width: controller.errors.containsKey('delivery_prices')
-                          ? 1
-                          : 0.5,
-                    ),
-                  ),
-                  child: ListView.builder(
-                    itemCount: controller.deliveryStatePrices.length,
-                    itemBuilder: (context, index) => DeliveryPriceItem(
-                      controller.deliveryStatePrices.values.toList()[index],
-                      onDelete: controller.removeDeleveryStatePrice,
-                      countries: controller.countries,
-                    ),
-                  ),
-                ),
-                if (controller.errors.containsKey('delivery_prices'))
-                  Text(
-                    controller.errors['delivery_prices']!,
-                    style: const TextStyle(
-                      color: Colors.red,
-                    ),
-                  ),
-                Container(
-                  margin: const EdgeInsets.only(top: 30, left: 40, right: 40),
-                  child: myMaterialButton(
-                    onPressed: controller.sendRequset,
-                    text: "127".tr,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Colors.white),
-                    color: Colors.black,
-                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                  ),
+          return controller.statusRequest == StatusRequest.loading
+              ? Center(
+                  child: Lottie.asset("assets/lottie/loading1.json",
+                      height: 80, width: 90),
                 )
-              ],
-            ),
-          );
+              : Form(
+                  key: controller.sellerVerifiction,
+                  child: ListView(
+                    primary: true,
+                    children: [
+                      SizedBox(height: h * 0.04),
+                      Container(
+                        padding: const EdgeInsets.only(left: 10, right: 10),
+                        margin:
+                            const EdgeInsets.only(top: 30, left: 30, right: 30),
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(12)),
+                          border: Border.all(color: Colors.black, width: 0.5),
+                        ),
+                        child: DropdownButtonFormField<String>(
+                          borderRadius: BorderRadius.circular(12),
+                          validator: (value) {
+                            if (value == '-1') {
+                              return "147".tr;
+                            }
+                          },
+                          icon: const Icon(
+                            Icons.location_on,
+                            color: Colors.green,
+                          ),
+                          items: [
+                            DropdownMenuItem(
+                              value: "-1",
+                              child: Text("125".tr),
+                            ),
+                            for (String country in controller.countries.keys)
+                              DropdownMenuItem(
+                                value: country,
+                                child: Text(
+                                  controller.countries[country]['name'],
+                                ),
+                              )
+                          ],
+                          onChanged: (val) {
+                            if (val != null) controller.changeCountry(val);
+                          },
+                          value: controller.slectedCountry.value,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.only(left: 10, right: 10),
+                        margin: const EdgeInsets.only(
+                            bottom: 5, top: 30, left: 30, right: 30),
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(12)),
+                          border: Border.all(color: Colors.black, width: 0.5),
+                        ),
+                        child: DropdownButtonFormField<String>(
+                          validator: (value) {
+                            if (value == '-1') {
+                              return "147".tr;
+                            }
+                          },
+                          icon: const Icon(
+                            Icons.location_on,
+                            color: Colors.green,
+                          ),
+                          items: [
+                            DropdownMenuItem(
+                              value: '-1',
+                              child: Text("117".tr),
+                            ),
+                            if (controller.slectedCountry.value != '-1')
+                              for (String state in controller
+                                  .countries[controller.slectedCountry.value]
+                                      ['states']
+                                  .keys)
+                                DropdownMenuItem(
+                                  value: state,
+                                  child: Text(
+                                    state,
+                                  ),
+                                )
+                          ],
+                          onChanged: (val) {
+                            if (val != null) controller.changeState(val);
+                          },
+                          value: controller.slectedState.value,
+                        ),
+                      ),
+                      if (controller.slectedState.value != '-1')
+                        Container(
+                          margin: const EdgeInsets.only(
+                              left: 30, right: 30, top: 10),
+                          child: myTextFormField(
+                            mycontroller: controller.address,
+                            labeltext: "114".tr,
+                            iconData: Icons.location_on,
+                            hintText: "115".tr,
+                            valid: (value) {
+                              if (value!.isEmpty) {
+                                return "18".tr;
+                              } else if (controller.errors
+                                  .containsKey('store_address')) {
+                                return controller.errors['store_address'];
+                              }
+                            },
+                            enabled: true,
+                            border: const OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20))),
+                          ),
+                        ),
+                      Container(
+                        margin:
+                            const EdgeInsets.only(top: 30, left: 30, right: 30),
+                        child: myTextFormField(
+                          mycontroller: controller.nemstore,
+                          labeltext: "80".tr,
+                          iconData: Icons.store,
+                          hintText: "126".tr,
+                          valid: (value) {
+                            if (value!.isEmpty) {
+                              return "18".tr;
+                            } else if (controller.errors
+                                .containsKey('store_name')) {
+                              return controller.errors['store_name'];
+                            }
+                          },
+                          enabled: true,
+                          border: const OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20))),
+                        ),
+                      ),
+                      AddDeliveryPriceForm(
+                        deliveryStates: controller.deliveryStates,
+                        onAdd: controller.addDeleveryStatePrice,
+                      ),
+                      Container(
+                        height: h * 0.4,
+                        width: w * 0.9,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 15,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 160, 244, 163),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color:
+                                controller.errors.containsKey('delivery_prices')
+                                    ? Colors.red
+                                    : Colors.grey,
+                            width:
+                                controller.errors.containsKey('delivery_prices')
+                                    ? 1
+                                    : 0.5,
+                          ),
+                        ),
+                        child: ListView.builder(
+                          primary: false,
+                          itemCount: controller.deliveryStatePrices.length,
+                          itemBuilder: (context, index) => DeliveryPriceItem(
+                            controller.deliveryStatePrices.values
+                                .toList()[index],
+                            onDelete: controller.removeDeleveryStatePrice,
+                            countries: controller.countries,
+                          ),
+                        ),
+                      ),
+                      if (controller.errors.containsKey('delivery_prices'))
+                        Text(
+                          controller.errors['delivery_prices']!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                          ),
+                        ),
+                      Container(
+                        margin:
+                            const EdgeInsets.only(top: 30, left: 40, right: 40),
+                        child: myMaterialButton(
+                          onPressed: controller.sendRequset,
+                          text: "127".tr,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Colors.white),
+                          color: Colors.black,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(20)),
+                        ),
+                      )
+                    ],
+                  ),
+                );
         },
       ),
     );

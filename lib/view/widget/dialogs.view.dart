@@ -61,13 +61,15 @@ class DialogsView extends StatelessWidget {
                 top: 12,
                 bottom: 16,
               ),
-              child: Text(
-                message,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Color.fromARGB(255, 38, 38, 38),
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
+              child: FittedBox(
+                child: Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 38, 38, 38),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
             ),

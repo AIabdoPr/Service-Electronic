@@ -8,11 +8,7 @@ import 'package:storage_database/api/request.dart';
 
 import '../../../link_api.dart';
 
-abstract class NewpasswordController extends GetxController {
-  newpassword();
-}
-
-class NewpasswordControllerInp extends NewpasswordController {
+class NewpasswordControllerInp extends GetxController {
   var NewpasswordFormKey = GlobalKey<FormState>();
   late TextEditingController Password;
   late TextEditingController ConfirmPassword;
@@ -27,7 +23,6 @@ class NewpasswordControllerInp extends NewpasswordController {
   StatusRequest? statusRequest;
   String? email;
 
-  @override
   newpassword() async {
     if (NewpasswordFormKey.currentState!.validate()) {
       statusRequest = StatusRequest.loading;
@@ -37,8 +32,7 @@ class NewpasswordControllerInp extends NewpasswordController {
           await Get.find<MainService>().storageDatabase.storageAPI!.request(
         'auth/password_forgot/password_reset',
         RequestType.post,
-          
-          headers: Applink.authedHeaders,
+        headers: Applink.authedHeaders,
         data: {
           'token': Get.arguments['token'],
           'user_id': Get.arguments['user_id'],
@@ -47,11 +41,30 @@ class NewpasswordControllerInp extends NewpasswordController {
       );
 
       if (_response.success) {
+        Get.snackbar(
+          margin: const EdgeInsets.all(15),
+          icon: const Icon(
+            Icons.verified_outlined,
+            color: Colors.green,
+            size: 30,
+          ),
+          (""),
+          (""),
+          backgroundColor: Colors.white70,
+          titleText: Text(
+            "62".tr,
+            style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          ),
+          messageText: Text(
+            "63".tr,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        );
         Get.offNamed(AppRoute.login);
       } else {
         Get.defaultDialog(
           title: "Warning",
-          middleText: _response.message ,
+          middleText: _response.message,
         );
         statusRequest = StatusRequest.failure;
         update();

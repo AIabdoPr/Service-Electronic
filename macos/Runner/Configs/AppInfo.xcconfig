@@ -11,4 +11,4 @@ PRODUCT_NAME = service_electronic
 PRODUCT_BUNDLE_IDENTIFIER = com.walidrebbouh.serviceElectronic
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2022 com.walid_rebbouh. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2023 com.walid_rebbouh. All rights reserved.

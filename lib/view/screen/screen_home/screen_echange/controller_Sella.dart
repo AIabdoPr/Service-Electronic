@@ -1,5 +1,4 @@
 import 'package:service_electronic/Data/model/transfer.model.dart';
-import 'package:service_electronic/core/class/statusRequest.dart';
 import 'package:service_electronic/core/services/main.service.dart';
 import 'package:get/get.dart';
 
@@ -21,7 +20,7 @@ class TransfersController extends GetxController {
   }
 
   chongenotification() {
-    Get.toNamed(AppRoute.my_transactions);
+    Get.toNamed(AppRoute.myTransactions);
     update();
   }
 }

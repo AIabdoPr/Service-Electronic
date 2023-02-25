@@ -13,7 +13,7 @@ import '../../../../controller/controller_solide.dart';
 import '../../../../core/class/statusRequest.dart';
 import '../../../../core/constant/circleraviter.dart';
 import '../../../../core/constant/icon_Bottun.dart';
-import 'controller_Sella.dart';
+import 'controller_sella.dart';
 
 class MyEchonge extends StatelessWidget {
   const MyEchonge({Key? key}) : super(key: key);
@@ -44,7 +44,6 @@ class MyEchonge extends StatelessWidget {
                       controller.chongenotification();
                     },
                     icon: Icons.shopping_cart_outlined,
-                    backgroundColor: Colors.red,
                   );
                 }),
             const mycircleraviter(
@@ -215,14 +214,13 @@ class MyEchonge extends StatelessWidget {
                                       return "68".tr;
                                     } else if (value!.isEmpty) {
                                       return '18'.tr;
-                                    } else if (double.parse(value) <= 10) {
+                                    } else if ((double.tryParse(value) ?? 0) <=
+                                        10) {
                                       return "47".tr;
-                                    } else if (double.parse(value) >
+                                    } else if ((double.tryParse(value) ?? 0) >
                                         controller.solid[controller.from.value]
                                             .maxReceive) {
                                       return "48".tr;
-                                    } else if (double.parse(value) <= 10) {
-                                      return "47".tr;
                                     }
                                   },
                                   labeltext: "29".tr,
@@ -275,10 +273,12 @@ class MyEchonge extends StatelessWidget {
                                                     .solidTo[
                                                         controller.to.value]
                                                     .id &&
-                                            double.parse(value) >
+                                            (double.tryParse(value) ?? 0) >
                                                 controller.user.balance) {
                                           return '148'.tr;
-                                        } else if (double.parse(value) <= 10) {
+                                        } else if ((double.tryParse(value) ??
+                                                0) <=
+                                            10) {
                                           return '47'.tr;
                                         }
                                       },

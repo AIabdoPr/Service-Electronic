@@ -11,6 +11,7 @@ import '../../link_api.dart';
 import 'product.model.dart';
 
 class PurchaseModel {
+  StorageDocument document;
   int id;
   ProductModel product;
   int count;
@@ -23,6 +24,7 @@ class PurchaseModel {
   DateTime createdAt;
 
   PurchaseModel(
+    this.document,
     this.id,
     this.product,
     this.count,
@@ -41,14 +43,29 @@ class PurchaseModel {
   String get userImageUrl => '${Applink.filesUrl}/$userImage';
 
   bool get sellerCanReport =>
-      DateTimeRange(start: createdAt, end: DateTime.now()).duration.inMinutes >=
-      2;
+      DateTimeRange(
+              start:
+                  DateTime.tryParse(deliverySteps.deliveringToClient ?? '') ??
+                      DateTime.now(),
+              end: DateTime.now())
+          .duration
+          .inDays >=
+      1;
 
-  static StorageCollection document =
+  static StorageCollection collection =
       Get.find<MainService>().storageDatabase.collection('purchases');
 
-  static StorageDocument sellerDocument = document.document('seller');
-  static StorageDocument userDocument = document.document('user');
+  static StorageDocument sellerDocument = collection.document('seller');
+  static StorageDocument userDocument = collection.document('user');
+
+  // Stream<PurchaseModel> stream() {
+  //   StorageDocument doc = document.document('$id');
+  //   print(doc.documentId);
+  //   doc.get().then((v) => print(v));
+  //   return doc.stream().asyncExpand<PurchaseModel>((data) async* {
+  //     yield await fromMap(data, document);
+  //   });
+  // }
 
   static Future<List<PurchaseModel>> sellerLoadAll() async {
     try {
@@ -56,8 +73,7 @@ class PurchaseModel {
           await Get.find<MainService>().storageDatabase.storageAPI!.request(
                 'purchase/seller/all',
                 RequestType.get,
-          
-          headers: Applink.authedHeaders,
+                headers: Applink.authedHeaders,
               );
       if (response.success && response.value != null) {
         await sellerDocument.set(
@@ -75,8 +91,7 @@ class PurchaseModel {
           await Get.find<MainService>().storageDatabase.storageAPI!.request(
                 'purchase/user/all',
                 RequestType.get,
-          
-          headers: Applink.authedHeaders,
+                headers: Applink.authedHeaders,
               );
       if (response.success && response.value != null) {
         await userDocument.set(
@@ -90,25 +105,28 @@ class PurchaseModel {
 
   static Future<List<PurchaseModel>> sellerGetAll() async {
     Map items = (await sellerDocument.get()) as Map? ?? {};
-    return allFromMap(items);
+    return allFromMap(items, sellerDocument);
   }
 
   static Future<List<PurchaseModel>> userGetAll() async {
     Map items = (await userDocument.get()) as Map? ?? {};
-    return allFromMap(items);
+    return allFromMap(items, userDocument);
   }
 
   static Stream<List<PurchaseModel>> sellerStream() =>
       sellerDocument.stream().asyncExpand((items) async* {
-        yield await allFromMap(items);
+        yield await allFromMap(items, sellerDocument);
       });
 
   static Stream<List<PurchaseModel>> userStream() =>
       userDocument.stream().asyncExpand((items) async* {
-        yield await allFromMap(items);
+        yield await allFromMap(items, userDocument);
       });
 
-  static Future<PurchaseModel> fromMap(Map data) async => PurchaseModel(
+  static Future<PurchaseModel> fromMap(
+          Map data, StorageDocument document) async =>
+      PurchaseModel(
+        document,
         data['id'],
         ProductModel.fromJson(data['product']),
         data['count'],
@@ -124,17 +142,22 @@ class PurchaseModel {
         DateTime.parse(data['created_at']),
       );
 
-  static Future<List<PurchaseModel>> allFromMap(Map items) async {
+  static Future<List<PurchaseModel>> allFromMap(
+      Map items, StorageDocument document) async {
     return [
-      for (String id in items.keys) await PurchaseModel.fromMap(items[id]),
+      for (String id in items.keys)
+        await PurchaseModel.fromMap(items[id], document),
     ];
   }
 
-  static Future<PurchaseModel?> fromId(int id,
-      {String target = 'seller'}) async {
+  static Future<PurchaseModel?> fromId(
+    int id,
+    StorageDocument document, {
+    String target = 'seller',
+  }) async {
     StorageDocument document =
         target == 'seller' ? sellerDocument : userDocument;
-    return await fromMap(await document.document('$id').get());
+    return await fromMap(await document.document('$id').get(), document);
   }
 }
 
@@ -186,9 +209,9 @@ class DeliverySteps {
         formatDate(data['location_steps']?['in_to_state']),
         formatDate(data['location_steps']?['discharging_on_office']),
         formatDate(data['location_steps']?['delivering_to_client']),
-        data['receive']?[0],
-        data['receive']?[1],
-        formatDate(data['receive']?[2]),
+        data['receive']?['client']?[0],
+        data['receive']?['client']?[1],
+        formatDate(data['receive']?['client']?[2]),
       );
 
   String get currenctStep {

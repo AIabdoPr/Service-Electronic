@@ -12,13 +12,12 @@ import '../../core/services/auth.service.dart';
 
 class CurrencyModel {
   int id;
-  String name, char;
+  String name, char, imageId;
   List<String> wallet;
   String? strWallet;
   double maxReceive;
-  Map<CurrencyModel, dynamic> prices;
   Map dPrices, data;
-
+  Map<String, CurrencyModel> avaliableCurrencies;
   bool proofIsRequired;
   CurrencyProofPickType pickType;
 
@@ -26,11 +25,12 @@ class CurrencyModel {
     this.id,
     this.name,
     this.char,
+    this.imageId,
     this.wallet,
     this.strWallet,
     this.maxReceive,
-    this.prices,
     this.dPrices,
+    this.avaliableCurrencies,
     this.data,
     this.proofIsRequired,
     this.pickType,
@@ -40,73 +40,85 @@ class CurrencyModel {
       Get.find<MainService>().storageDatabase.collection('currencies');
 
   String get image {
-    print('${Applink.currencies}/$id.png');
-    return '${Applink.currencies}/$id.png';
+    return '${Applink.filesUrl}/$imageId';
   }
 
   static Future<List<CurrencyModel>> loadAll() async {
-    try {
-      var response =
-          await Get.find<MainService>().storageDatabase.storageAPI!.request(
-                'currency',
-                RequestType.get,
-                headers: Applink.authedHeaders,
-              );
-      if (response.success && response.value != null) {
-        await document.set(
-          response.value.isNotEmpty ? response.value : {},
-          keepData: false,
-        );
-      }
-    } catch (e) {}
+    // try {
+    var response =
+        await Get.find<MainService>().storageDatabase.storageAPI!.request(
+              'currency',
+              RequestType.get,
+              headers: Applink.authedHeaders,
+            );
+    if (response.success && response.value != null) {
+      await document.set(
+        response.value.isNotEmpty ? response.value : {},
+        keepData: false,
+      );
+    }
+    // } catch (e) {}
     return getAll();
   }
 
   static Future<List<CurrencyModel>> getAll() async {
     Map items = (await document.get()) as Map? ?? {};
-    return await allFromJson(items);
+    return await allFromMap(items);
   }
 
-  static Future<CurrencyModel> fromJson(Map data) async {
+  static Future<CurrencyModel> fromMap(Map data) async {
     if (data['prices'].isEmpty) data['prices'] = {};
-    if (data['rendred_prices'] == null || data['rendred_prices'].isEmpty) {
-      data['rendred_prices'] = {};
+    if (data['avaliable_currencies'] == null ||
+        data['avaliable_currencies'].isEmpty) {
+      data['avaliable_currencies'] = {};
     }
     return CurrencyModel(
       data['id'],
       data['name'],
       data['char'],
+      data['image_id'],
       data['wallet']?.toString().split(', ') ?? [],
       data['wallet']?.toString().replaceAll(', ', '\n'),
       double.parse((data['platform_wallet']?['balance'] ?? '0').toString()),
-      {
-        for (var currencyId in (data['rendred_prices'] ?? {}).keys)
-          await CurrencyModel.fromJson(
-                  data['rendred_prices'][currencyId]['currency']):
-              data['rendred_prices'][currencyId]['price'],
-      },
+      // {
+      //   for (String currencyId in (data['prices'] ?? {}).keys)
+      //     currencyId: await CurrencyModel.fromId(currencyId),
+      // },
       data['prices'],
+      {
+        for (String id in data['avaliable_currencies'].keys)
+          id: await CurrencyModel.fromMap(data['avaliable_currencies'][id]),
+      },
       data['data']?.isNotEmpty == true ? data['data'] : {},
       data['proof_is_required'],
       CurrencyProofPickType.fromString(data['image_pick_type']),
     );
   }
 
-  static Future<List<CurrencyModel>> allFromJson(Map items) async =>
-      [for (String id in items.keys) await fromJson(items[id])];
+  static Future<List<CurrencyModel>> allFromMap(Map items) async =>
+      [for (String id in items.keys) await fromMap(items[id])];
 
-  // static Future<List<CurrencyModel>> all() async {
-  //   Map data = (await document.get()) as Map? ?? {};
-  //   return allFromJson(data);
-  // }
+  Map get map => {
+        'id': id,
+        'name': name,
+        'char': char,
+        'image_id': imageId,
+        'wallet': wallet.join(', '),
+        'platform_wallet': {'balance': maxReceive},
+        'prices': dPrices,
+        'avaliable_currencies': {
+          for (String id in avaliableCurrencies.keys)
+            id: avaliableCurrencies[id]!.map
+        },
+        'data': data,
+        'proof_is_required': proofIsRequired,
+        'image_pick_type': '$pickType',
+      };
 
-  // static Future<CurrencyModel?> fromId(int id) async {
-  //   List<CurrencyModel> items = await all();
-  //   for (CurrencyModel item in items) {
-  //     if (item.id == id) return item;
-  //   }
-  //   return null;
-  // }
+  static Future<CurrencyModel> fromId(String id) async {
+    Map data = (await document.document(id).get()) as Map;
+    return fromMap(data);
+  }
 }
 
 class CurrencyProofPickType {
@@ -129,4 +141,7 @@ class CurrencyProofPickType {
   };
 
   static CurrencyProofPickType fromString(String type) => values[type]!;
+
+  @override
+  String toString() => type;
 }

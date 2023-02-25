@@ -9,16 +9,11 @@ import 'package:storage_database/api/response.dart';
 
 import '../../../link_api.dart';
 
-abstract class VerficodeController extends GetxController {
-  verifaycode(verifycode);
-}
-
-class VerficodeCntrollerInp extends VerficodeController {
+class VerficodeCntrollerInp extends GetxController {
   StatusRequest? statusRequest;
 
   String? email;
 
-  @override
   verifaycode(verifycode) async {
     statusRequest = StatusRequest.loading;
     update();
@@ -27,8 +22,7 @@ class VerficodeCntrollerInp extends VerficodeController {
         await Get.find<MainService>().storageDatabase.storageAPI!.request(
       'auth/password_forgot/email_verify',
       RequestType.post,
-          
-          headers: Applink.authedHeaders,
+      headers: Applink.authedHeaders,
       data: {
         'token': Get.arguments['token'],
         'code': verifycode,
@@ -44,7 +38,7 @@ class VerficodeCntrollerInp extends VerficodeController {
     } else {
       Get.defaultDialog(
         title: "Warning",
-        middleText: response.message ,
+        middleText: response.message,
       );
       statusRequest = StatusRequest.failure;
       update();

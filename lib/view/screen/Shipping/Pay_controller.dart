@@ -24,17 +24,18 @@ class PayController extends GetxController {
   GlobalKey<FormState> protfolio = GlobalKey<FormState>();
   AuthSerivce authSerivce = Get.find();
 
-  StatusRequest statusRequest = StatusRequest.success;
-
   UserModel get user => authSerivce.currentUser.value!;
 
-  RxMap<int, CurrencyModel> platofromCurrencies = <int, CurrencyModel>{}.obs;
+  RxMap<String, CurrencyModel> platofromCurrencies =
+      <String, CurrencyModel>{}.obs;
+
+  Map<String, TextEditingController> dataControllers = {};
+  Map<String, String> errors = {};
 
   int display = 1;
 
-  int currenctCurrencyId = -1;
+  String currenctCurrencyId = '-1';
   late TextEditingController dibosit;
-  late TextEditingController withdraw;
   late TextEditingController transfier;
   late TextEditingController blanci;
   File? imageproof;
@@ -43,28 +44,24 @@ class PayController extends GetxController {
   double rechargeBalance = 0;
 
   Future refreshPage() async {
-    await UserModel.refreshUser();
     sellBalance = 0;
     rechargeBalance = 0;
     display = 1;
-    currenctCurrencyId = -1;
+    currenctCurrencyId = '-1';
     dibosit.clear();
-    withdraw.clear();
     transfier.clear();
     blanci.clear();
     imageproof = null;
-    platofromCurrencies.value = {
-      for (CurrencyModel currency
-          in (user.platformSettings.platformCurrency.prices.keys))
-        currency.id: currency
-    };
+
+    platofromCurrencies.value =
+        user.platformSettings.platformCurrency.avaliableCurrencies;
+
     update();
   }
 
   dibosi() async {
     if (protfolio.currentState!.validate() && imageproof != null) {
-      statusRequest = StatusRequest.loading;
-      update();
+      DialogsView.loading().show();
       CurrencyModel platformCurrency =
           authSerivce.currentUser.value!.platformSettings.platformCurrency;
 
@@ -72,12 +69,10 @@ class PayController extends GetxController {
           await Get.find<MainService>().storageDatabase.storageAPI!.request(
         '${Applink.transfers}/recharge',
         RequestType.post,
-          
-          headers: Applink.authedHeaders,
+        headers: Applink.authedHeaders,
         data: {
           'sended_balance': dibosit.text,
-          'sended_currency_id':
-              platofromCurrencies[currenctCurrencyId]!.id.toString(),
+          'sended_currency_id': currenctCurrencyId,
           'received_currency_id': platformCurrency.id.toString(),
         },
         files: [
@@ -85,23 +80,21 @@ class PayController extends GetxController {
         ],
       );
       if (response.success) {
-        statusRequest = StatusRequest.success;
         await TransferModel.loadAll(TransferTarget.recharges);
-        await UserModel.refreshUser();
+        Get.back();
         Get.back();
       } else {
+        Get.back();
         Get.defaultDialog(
           title: 'Transfer error',
           middleText: response.message,
         );
-        statusRequest = StatusRequest.failure;
-        update();
       }
     }
   }
 
   calculateRechareBalance(String text) {
-    if (text.isEmpty || currenctCurrencyId == -1) {
+    if (text.isEmpty || currenctCurrencyId == '-1') {
       rechargeBalance = 0;
     } else {
       double value = double.tryParse(text) ?? 0;
@@ -113,7 +106,7 @@ class PayController extends GetxController {
   }
 
   calculateBalance(String text) {
-    if (text.isEmpty || currenctCurrencyId == -1) {
+    if (text.isEmpty || currenctCurrencyId == '-1') {
       sellBalance = 0;
     } else {
       double value = double.tryParse(text) ?? 0;
@@ -126,87 +119,95 @@ class PayController extends GetxController {
 
   Withdraw() async {
     if (protfolio.currentState!.validate()) {
-      statusRequest = StatusRequest.loading;
-      update();
+      DialogsView.loading().show();
       APIResponse response =
           await Get.find<MainService>().storageDatabase.storageAPI!.request(
         '${Applink.transfers}/withdraw',
         RequestType.post,
-          
-          headers: Applink.authedHeaders,
+        log: true,
+        headers: Applink.authedHeaders,
         data: {
           'received_balance': blanci.text,
           'sended_currency_id':
               user.platformSettings.platformCurrency.id.toString(),
-          'received_currency_id':
-              platofromCurrencies[currenctCurrencyId]!.id.toString(),
-          'wallet': withdraw.text,
+          'received_currency_id': currenctCurrencyId,
+          'data': jsonEncode({
+            for (String name in dataControllers.keys)
+              name: dataControllers[name]!.text,
+          }),
           'for_what': 'withdraw'
         },
       );
       if (response.success) {
-        statusRequest = StatusRequest.success;
+        // statusRequest = StatusRequest.success;
         await TransferModel.loadAll(TransferTarget.withdraws);
-        await UserModel.refreshUser();
+        // await UserModel.refreshUser();
+        Get.back();
         Get.back();
       } else {
-        Get.defaultDialog(
-          title: 'Transfer error',
-          middleText: response.message,
-        );
-        statusRequest = StatusRequest.failure;
-        update();
+        Get.back();
+        if (response.errors != null) {
+          errors = response.errors!;
+          protfolio.currentState!.validate();
+        } else {
+          Get.defaultDialog(
+            title: 'Transfer error',
+            middleText: response.message,
+          );
+        }
+        // statusRequest = StatusRequest.failure;
+        // update();
       }
     }
   }
 
   transfer() async {
     if (protfolio.currentState!.validate()) {
-      statusRequest = StatusRequest.loading;
-      update();
+      DialogsView.loading().show();
       APIResponse response =
           await Get.find<MainService>().storageDatabase.storageAPI!.request(
         'send_mony',
         RequestType.post,
-          
-          headers: Applink.authedHeaders,
+        headers: Applink.authedHeaders,
         data: {
           'email': transfier.text,
           'balance': blanci.text,
         },
       );
+      Get.back();
       if (response.success) {
-        await UserModel.refreshUser();
         Get.back();
       } else {
-        statusRequest = StatusRequest.success;
-        update();
-        DialogsView.message(
-          'Balance Transfer',
-          response.message,
-        ).show();
+        if (response.errors != null) {
+          errors = response.errors!;
+          protfolio.currentState!.validate();
+        } else {
+          Get.defaultDialog(
+            title: 'Balance Transfer',
+            middleText: response.message,
+          );
+        }
       }
     }
   }
 
   @override
   void onInit() {
-    withdraw = TextEditingController();
+    // withdraw = TextEditingController();
     blanci = TextEditingController();
     transfier = TextEditingController();
     dibosit = TextEditingController();
 
-    platofromCurrencies.value = {
-      for (CurrencyModel currency
-          in (user.platformSettings.platformCurrency.prices.keys))
-        currency.id: currency
-    };
+    platofromCurrencies.value =
+        user.platformSettings.platformCurrency.avaliableCurrencies;
+    // statusRequest = StatusRequest.success;
+    // update();
+
     super.onInit();
   }
 
   @override
   void dispose() {
-    withdraw.dispose();
     blanci.dispose();
     transfier.dispose();
     dibosit.dispose();
@@ -216,7 +217,7 @@ class PayController extends GetxController {
 //================ فنكشن رفع الصور ======================================
   Future<void> ublodimage() async {
     final pickedImage = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
+      source: platofromCurrencies[currenctCurrencyId]!.pickType.source,
       imageQuality: 50,
     );
     if (pickedImage != null) {

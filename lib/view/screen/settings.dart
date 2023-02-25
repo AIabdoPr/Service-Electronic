@@ -98,7 +98,7 @@ class Setting extends StatelessWidget {
                                                 borderRadius:
                                                     BorderRadius.circular(50),
                                                 border: Border.all(
-                                                  color: Color.fromARGB(
+                                                  color: const Color.fromARGB(
                                                       0, 173, 173, 173),
                                                   width: 3,
                                                 ),
@@ -127,7 +127,7 @@ class Setting extends StatelessWidget {
                                                   2 -
                                               68,
                                           child: CirclerButton.icon(
-                                            borderColor: Color.fromARGB(
+                                            borderColor: const Color.fromARGB(
                                                 135, 247, 3, 153),
                                             borderSize: 2,
                                             size: 30,
@@ -157,38 +157,38 @@ class Setting extends StatelessWidget {
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(
+                                    margin: const EdgeInsets.only(
                                         right: 10, left: 10, top: 10),
                                     child: Row(
                                       children: [
                                         Text(
                                             "${"116".tr} : ${controller.user.firstname}"),
-                                        Expanded(child: SizedBox()),
+                                        const Expanded(child: SizedBox()),
                                       ],
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(
+                                    margin: const EdgeInsets.only(
                                         right: 10, left: 10, top: 10),
                                     child: Row(
                                       children: [
                                         Text(
                                             "${"153".tr} : ${controller.user.lastname}"),
-                                        Expanded(child: SizedBox()),
+                                        const Expanded(child: SizedBox()),
                                       ],
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(
+                                    margin: const EdgeInsets.only(
                                         right: 10, left: 10, top: 10),
                                     child: Row(
                                       children: [
                                         Text(
                                             "${"2".tr} : ${controller.user.email}"),
-                                        Expanded(child: SizedBox()),
+                                        const Expanded(child: SizedBox()),
                                         InkWell(
                                             onTap: controller.editEmail,
-                                            child: Icon(
+                                            child: const Icon(
                                               Icons.create,
                                               color: Colors.blue,
                                             ))
@@ -196,35 +196,35 @@ class Setting extends StatelessWidget {
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(
+                                    margin: const EdgeInsets.only(
                                         right: 10, left: 10, top: 10),
                                     child: Row(
                                       children: [
                                         Text(
                                             "${"15".tr} : ${controller.user.phone}"),
-                                        Expanded(child: SizedBox()),
-                                        InkWell(
-                                            onTap: () {
-                                              // controller.editData(
-                                              //     'phone', Icons.phone_outlined);
-                                            },
-                                            child: Icon(
-                                              Icons.create,
-                                              color: Colors.blue,
-                                            ))
+                                        const Expanded(child: SizedBox()),
+                                        // InkWell(
+                                        //     onTap: () {
+                                        //       // controller.editData(
+                                        //       //     'phone', Icons.phone_outlined);
+                                        //     },
+                                        //     child: const Icon(
+                                        //       Icons.create,
+                                        //       color: Colors.blue,
+                                        //     ))
                                       ],
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(
+                                    margin: const EdgeInsets.only(
                                         right: 10, left: 10, top: 10),
                                     child: Row(
                                       children: [
                                         Text("3.5".tr),
-                                        Expanded(child: SizedBox()),
+                                        const Expanded(child: SizedBox()),
                                         InkWell(
                                             onTap: controller.editPassword,
-                                            child: Icon(
+                                            child: const Icon(
                                               Icons.create,
                                               color: Colors.blue,
                                             ))
@@ -232,12 +232,12 @@ class Setting extends StatelessWidget {
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(
+                                    margin: const EdgeInsets.only(
                                         right: 10, left: 10, top: 10),
                                     child: Row(
                                       children: [
                                         Text("7".tr),
-                                        Expanded(child: SizedBox()),
+                                        const Expanded(child: SizedBox()),
                                         InkWell(
                                             onTap: () {
                                               Get.defaultDialog(
@@ -264,8 +264,8 @@ class Setting extends StatelessWidget {
                                                                     left: 10,
                                                                     right: 10,
                                                                     bottom: 15),
-                                                            child: Center(
-                                                              child: const Text(
+                                                            child: const Center(
+                                                              child: Text(
                                                                 "English",
                                                                 style: TextStyle(
                                                                     fontSize:
@@ -322,10 +322,10 @@ class Setting extends StatelessWidget {
                                                                     left: 10,
                                                                     right: 10,
                                                                     bottom: 15),
-                                                            child: Center(
+                                                            child: const Center(
                                                               child: Text(
                                                                 "العربية",
-                                                                style: const TextStyle(
+                                                                style: TextStyle(
                                                                     fontSize:
                                                                         20,
                                                                     fontWeight:

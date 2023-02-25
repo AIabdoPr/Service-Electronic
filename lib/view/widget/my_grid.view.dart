@@ -16,8 +16,8 @@ class MyGridView extends StatelessWidget {
     this.gapSize = 4,
     this.rowMainAxisAlignment = MainAxisAlignment.center,
     this.colMainAxisAlignment = MainAxisAlignment.center,
-    this.rowCrossAxisAlignment = CrossAxisAlignment.center,
-    this.colCrossAxisAlignment = CrossAxisAlignment.center,
+    this.rowCrossAxisAlignment = CrossAxisAlignment.stretch,
+    this.colCrossAxisAlignment = CrossAxisAlignment.stretch,
     this.rowMainAxisSize = MainAxisSize.max,
     this.colMainAxisSize = MainAxisSize.max,
   }) : super(key: key);

@@ -42,8 +42,7 @@ class SellerModel {
           await Get.find<MainService>().storageDatabase.storageAPI!.request(
         Applink.editSeller,
         RequestType.post,
-          
-          headers: Applink.authedHeaders,
+        headers: Applink.authedHeaders,
         data: {
           if (storeName != null &&
               storeName.isNotEmpty &&
@@ -91,4 +90,7 @@ class SellerStatus {
   };
 
   static SellerStatus? fromString(String status) => values[status];
+
+  @override
+  String toString() => status;
 }

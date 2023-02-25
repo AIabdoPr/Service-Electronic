@@ -63,17 +63,19 @@ class AddProductController extends GetxController {
     }
   }
 
-  pickImages() async {
+  pickImages(File image) async {
     if (action == 'Edit' && !imagesEdited) {
       images.clear();
       imagesEdited = true;
     }
-    List<XFile> image = await ImagePicker().pickMultiImage();
-    if (image.isNotEmpty) {
-      await comporessImages(image);
-      update();
-    }
+    images.add(image);
     update();
+    // List<XFile> image = await ImagePicker().pickMultiImage();
+    // if (image.isNotEmpty) {
+    //   await comporessImages(image);
+    //   update();
+    // }
+    // update();
   }
 
   @override
@@ -104,7 +106,6 @@ class AddProductController extends GetxController {
         name.text = oldProudct!.name;
         description.text = oldProudct!.description;
         count.text = oldProudct!.count.toString();
-        selctedmodel.value = oldProudct!.category.id;
 
         for (String url in oldProudct!.imagesUrils) {
           File? image = (await Get.find<MainService>()

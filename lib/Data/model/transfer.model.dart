@@ -35,8 +35,8 @@ class TransferModel {
         data['id'],
         double.parse(data['sended_balance'].toString()),
         double.parse(data['received_balance'].toString()),
-        await CurrencyModel.fromJson(data['sended_currency']),
-        await CurrencyModel.fromJson(data['received_currency']),
+        await CurrencyModel.fromMap(data['sended_currency']),
+        await CurrencyModel.fromMap(data['received_currency']),
         data['data'].isNotEmpty ? data['data'] : {},
         TransferStatus.fromString(data['status']),
         DateTime.parse(data['created_at']),
@@ -57,8 +57,7 @@ class TransferModel {
           await Get.find<MainService>().storageDatabase.storageAPI!.request(
                 'transfer/${target.urlName}',
                 RequestType.get,
-          
-          headers: Applink.authedHeaders,
+                headers: Applink.authedHeaders,
               );
       if (response.success && response.value != null) {
         await target.document.set(

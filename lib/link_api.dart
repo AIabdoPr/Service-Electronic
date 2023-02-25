@@ -2,16 +2,18 @@ import 'package:service_electronic/core/services/auth.service.dart';
 import 'package:get/get.dart';
 
 class Applink {
-  static const String serverUrl = 'http://service-electronic.ddns.net';
+  // static const String serverUrl = 'http://service-electronic.ddns.net';
+  // static const String serverUrl = 'http://45.82.73.53';
+  static const String serverUrl = 'http://5.182.18.154';
   static const String apiUrl = '$serverUrl/api';
 
   static const String socketUrl = '$serverUrl:8000';
 
   static const String filesUrl = "$serverUrl/file/api";
-  static const String storageUrl = "$serverUrl/storage";
-  static const String currencies = "$storageUrl/currencies";
-  static const String categories = "$storageUrl/categories";
-  static const String offers = "$storageUrl/offers";
+  // static const String storageUrl = "$serverUrl/storage";
+  // static const String currencies = "$filesUrl/currencies";
+  // static const String categories = "$filesUrl/categories";
+  // static const String offers = "$filesUrl/offers";
 
   static const String login = "auth/login";
   static const String singup = "auth/signup";

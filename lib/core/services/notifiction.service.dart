@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:service_electronic/Data/model/notification.model.dart';
 import 'package:service_electronic/Data/model/transfer.model.dart';
@@ -10,21 +10,22 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:get/get.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+import '../../Data/model/offer_request.dart';
+import '../../Data/model/purchase.model.dart';
 import 'main.service.dart';
 
 class NotificationService extends GetxService {
   MainService mainService = Get.find();
+  AuthSerivce authService = Get.find();
 
-  RxInt newTransfer = 0.obs;
-  // RxInt newProducts = 0.obs;
-  RxInt newPurchaseRequests = 0.obs;
-  RxInt newPurchases = 0.obs;
-  RxInt newMobileServices = 0.obs;
-  RxInt newServices = 0.obs;
-  RxInt allNewServices = 0.obs;
+  RxInt newsTransfers = 0.obs;
+  RxInt newsServices = 0.obs;
+  RxInt newsSellerPurchases = 0.obs;
+  RxInt newsClientPurchases = 0.obs;
+  RxInt newsAdminMessages = 0.obs;
 
   IO.Socket? socket;
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  FirebaseMessaging get messaging => FirebaseMessaging.instance;
 
   messaingConfiure() async {
     NotificationSettings settings = await messaging.requestPermission(
@@ -37,11 +38,11 @@ class NotificationService extends GetxService {
       sound: true,
     );
 
-    messaging.setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    //   messaging.setForegroundNotificationPresentationOptions(
+    //     alert: true,
+    //     badge: true,
+    //     sound: true,
+    //   );
 
     print('User granted permission: ${settings.authorizationStatus}');
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -57,8 +58,15 @@ class NotificationService extends GetxService {
   bool connectionError = false;
   bool? connected;
 
-  init(String token) async {
-    await messaingConfiure();
+  init() async {
+    if (!Platform.isWindows) {
+      authService.currentUser.value?.checkMessagingToken(
+        (await messaging.getToken())!,
+      );
+      await messaingConfiure();
+    }
+
+    String? token = Get.find<AuthSerivce>().currentUser.value!.socketToken;
     print('auth token: $token');
     socket = IO.io(Applink.socketUrl, {
       'autoConnect': false,
@@ -68,29 +76,33 @@ class NotificationService extends GetxService {
     socket!.onConnect((_) {
       socket!.emit('auth', token);
       if (!connectionError) return;
-      ScaffoldMessenger.of(Get.context!).showSnackBar(
-        SnackBar(
-          content: Flex(
-            direction: Axis.horizontal,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: Text('143'.tr),
-              ),
-              const Icon(
-                Icons.wifi,
-                color: Color.fromARGB(255, 40, 248, 50),
-              )
-            ],
-          ),
-        ),
-      );
+      connectionError = false;
+      // ScaffoldMessenger.of(Get.context!).showSnackBar(
+      //   SnackBar(
+      //     content: Flex(
+      //       direction: Axis.horizontal,
+      //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //       children: [
+      //         Flexible(
+      //           child: Text('143'.tr),
+      //         ),
+      //         const Icon(
+      //           Icons.wifi,
+      //           color: Color.fromARGB(255, 40, 248, 50),
+      //         )
+      //       ],
+      //     ),
+      //   ),
+      // );
     });
-    socket!.onDisconnect((_) => print('onDisconnect: disconnect'));
+    socket!.onDisconnect((_) {
+      connectionError = true;
+      print('onDisconnect: disconnect');
+    });
     socket!.onConnectError((data) {
       print(data.toString());
+      if (connectionError) return;
       connectionError = true;
-
       ScaffoldMessenger.of(Get.context!).showSnackBar(
         SnackBar(
           content: Flex(
@@ -110,12 +122,43 @@ class NotificationService extends GetxService {
       );
     });
     socket!.onError((data) {
+      connectionError = true;
       print(data);
     });
-    socket!.on('notifications', (args) async {
+    socket!.on('auth-resualt', (data) async {
+      connected = data['success'];
+      if (connected == false) Get.find<AuthSerivce>().signout();
+      socket!.emit('listenUser');
+    });
+    socket!.on('user-update', (args) async {
+      if (args.containsKey('user')) {
+        UserModel user = (await UserModel.fromMap(args['user']));
+        user.save();
+      }
+    });
+    socket!.on('notifications', (args) {
       NotificationModel notification = NotificationModel.fromMap(args);
-      await TransferModel.loadAll(TransferTarget.transfers);
-      await UserModel.refreshUser();
+
+      if (notification.name == 'admin-message') {
+        newsAdminMessages += 1;
+      } else if (notification.name == 'balance-received' ||
+          notification.name == 'transfer-answer') {
+        newsTransfers += 1;
+        TransferModel.loadAll(TransferTarget.transfers);
+      } else if (notification.name == 'offer-request-answred') {
+        newsServices += 1;
+        OfferRequestModel.loadAll();
+      } else if ([
+        'new-product-solded',
+        'purchase-seller-answer',
+        'purchase-seller-repport',
+        'purchase-client-answer',
+        'purchase-request-readed',
+        'purchase-step-updated',
+      ].contains(notification.name)) {
+        PurchaseModel.userLoadAll();
+        PurchaseModel.sellerLoadAll();
+      }
       Get.snackbar(
         notification.title,
         notification.message,
@@ -124,11 +167,6 @@ class NotificationService extends GetxService {
       );
     });
     socket!.connect();
-
-    socket!.on('auth-resualt', (data) async {
-      connected = data['success'];
-      if (connected == false) Get.find<AuthSerivce>().signout();
-    });
   }
 
   disconnect() {

@@ -7,6 +7,7 @@ import '../../link_api.dart';
 
 class OfferModel {
   int id;
+  String imageId;
   Map<String, String> title;
   Map<String, String> description;
   Map<String, Map> subOffers;
@@ -15,6 +16,7 @@ class OfferModel {
 
   OfferModel(
     this.id,
+    this.imageId,
     this.title,
     this.description,
     this.subOffers,
@@ -25,15 +27,16 @@ class OfferModel {
   static StorageCollection collection =
       Get.find<MainService>().storageDatabase.collection('offers');
 
-  String get image => '${Applink.offers}/$id.png';
+  String get image => '${Applink.filesUrl}/$imageId';
 
   static OfferModel fromMap(Map data) => OfferModel(
         data['id'],
+        data['image_id'],
         Map<String, String>.from(data['title']),
         Map<String, String>.from(data['description']),
         Map<String, Map>.from(data['sub_offers']),
         data['fields'].isNotEmpty ? Map<String, Map>.from(data['fields']) : {},
-        data['data'].isNotEmpty ?Map<String, Map>.from(data['data']):{},
+        data['data'].isNotEmpty ? Map<String, Map>.from(data['data']) : {},
       );
 
   static Future<List<OfferModel>> getAll() async {
@@ -50,7 +53,7 @@ class OfferModel {
           await Get.find<MainService>().storageDatabase.storageAPI!.request(
                 'offer',
                 RequestType.get,
-          headers: Applink.authedHeaders,
+                headers: Applink.authedHeaders,
               );
       if (response.success && response.value != null) {
         await collection.set(

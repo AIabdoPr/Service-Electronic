@@ -1,7 +1,7 @@
+import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-//import 'package:service_electronic/view/screen/screen_home/screen_Service/service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'core/localization/localiztioncontroller.dart';
@@ -13,7 +13,6 @@ import 'routes.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-
   print("Handling a background message: ${message.messageId}");
 }
 
@@ -22,9 +21,11 @@ void main() async {
     print(details.exception);
   };
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
 
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  if (!Platform.isWindows) {
+    await Firebase.initializeApp();
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  }
   await Get.put(MainService()).init();
 
   runApp(const MyApp());

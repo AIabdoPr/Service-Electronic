@@ -7,14 +7,15 @@ import '../../link_api.dart';
 
 class ExchangeModel {
   int id;
-  String targetEmail;
+  String fromEmail, toEmail;
   double sendedBalance;
   double receivedBalance;
   DateTime sendedAt;
 
   ExchangeModel(
     this.id,
-    this.targetEmail,
+    this.fromEmail,
+    this.toEmail,
     this.sendedBalance,
     this.receivedBalance,
     this.sendedAt,
@@ -28,7 +29,8 @@ class ExchangeModel {
       ];
   static ExchangeModel fromMap(Map data) => ExchangeModel(
         data['id'],
-        data['target_user']['email'],
+        data['from_user']['email'],
+        data['to_user']['email'],
         double.parse(data['sended_balance'].toString()),
         double.parse(data['received_balance'].toString()),
         DateTime.parse(data['created_at']),
@@ -40,7 +42,7 @@ class ExchangeModel {
           await Get.find<MainService>().storageDatabase.storageAPI!.request(
                 'exchanges',
                 RequestType.get,
-          headers: Applink.authedHeaders,
+                headers: Applink.authedHeaders,
               );
       if (response.success && response.value != null) {
         await collection.set(

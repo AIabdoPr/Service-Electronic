@@ -56,18 +56,18 @@ class AppRoute {
   static const String home = "/Home";
   static const String homeCart = "/HomeCart";
   static const String myechonge = "/MyEchonge";
-  static const String Echonge_2 = "/echonge_2";
+  static const String echonge2 = "/echonge_2";
   static const String myservice = "/MyService";
   static const String offerRequest = "/offerRequest";
   static const String offersCart = "/OffersCart";
   static const String mobile = "/Mobile_service";
-  static const String ProductModel = "/MyStore";
+  static const String productModel = "/MyStore";
   static const String store2 = "/Store2";
   static const String purchases = "/Purchases";
   static const String purchaseDetails = "/PurchaseDetails";
 
   static const String notification = "/Notification";
-  static const String my_transactions = "/My_transactions";
+  static const String myTransactions = "/My_transactions";
   static const String addProduct = "/AddProduct";
   static const String setting = "/Setting";
   static const String seller = "/Seller";
@@ -93,17 +93,16 @@ class AppRoute {
     // hompage
 
     GetPage(name: AppRoute.myechonge, page: () => const MyEchonge()),
-    GetPage(name: AppRoute.Echonge_2, page: () => const echonge_2()),
+    GetPage(name: AppRoute.echonge2, page: () => const Echonge2()),
     GetPage(name: AppRoute.myservice, page: () => const MyService()),
     GetPage(name: AppRoute.offerRequest, page: () => const OfferRequest()),
     GetPage(name: AppRoute.offersCart, page: () => const OffersCart()),
-    GetPage(name: AppRoute.ProductModel, page: () => const MyStore()),
+    GetPage(name: AppRoute.productModel, page: () => const MyStore()),
     GetPage(name: AppRoute.store2, page: () => const Store2()),
     GetPage(name: AppRoute.purchases, page: () => const Purchases()),
     GetPage(
         name: AppRoute.purchaseDetails, page: () => const PurchaseDetails()),
-    GetPage(
-        name: AppRoute.my_transactions, page: () => const My_transactions()),
+    GetPage(name: AppRoute.myTransactions, page: () => const My_transactions()),
     GetPage(name: AppRoute.notification, page: () => const Notification()),
     GetPage(name: AppRoute.addProduct, page: () => const AddProduct()),
     GetPage(name: AppRoute.mobile, page: () => const Mobile_service()),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:service_electronic/link_api.dart';
 import 'package:service_electronic/routes.dart';
 import 'package:service_electronic/view/widget/dropdown.view.dart';
 import 'package:service_electronic/view/widget/network_image.view.dart';
@@ -28,34 +29,40 @@ class MyService extends StatelessWidget {
       init: ServiceController(),
       builder: (controller) {
         return Scaffold(
-            appBar: AppBar(
-                backgroundColor: Color.fromARGB(255, 249, 82, 82),
-                title: Center(
-                  child: Text(
-                    "9".tr,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
+          appBar: AppBar(
+              backgroundColor: const Color.fromARGB(255, 249, 82, 82),
+              title: Center(
+                child: Text(
+                  "9".tr,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                actions: [
-                  MyIconBottun(
-                    count: Get.find<NotificationService>().newServices.value,
-                    radius: 8,
-                    onTap: () {
-                      Get.toNamed(AppRoute.offersCart);
-                    },
-                    icon: Icons.shopping_cart,
-                    backgroundColor: Color.fromARGB(255, 249, 122, 113),
-                  ),
-                  mycircleraviter(
-                    image: "assets/images/logo3.png",
-                    minRadius: 5,
-                    maxRadius: 23,
-                    height: h * 0.50,
-                    width: w * 0.50,
-                    backgroundColor: Colors.white,
-                  ),
-                ]),
-            body: controller.statusRequest == StatusRequest.loading
+              ),
+              actions: [
+                MyIconBottun(
+                  posY: 5,
+                  count: controller.offersRequests.fold(
+                      0,
+                      (value, offer) =>
+                          value + (offer.status.isWaitingAdminAccept ? 1 : 0)),
+                  radius: 8,
+                  onTap: () {
+                    Get.toNamed(AppRoute.offersCart);
+                  },
+                  icon: Icons.shopping_cart,
+                  color: const Color.fromARGB(255, 32, 135, 251),
+                ),
+                mycircleraviter(
+                  image: "assets/images/logo3.png",
+                  minRadius: 5,
+                  maxRadius: 23,
+                  height: h * 0.50,
+                  width: w * 0.50,
+                  backgroundColor: Colors.white,
+                ),
+              ]),
+          body: RefreshIndicator(
+            onRefresh: controller.getOffers,
+            child: controller.statusRequest == StatusRequest.loading
                 ? Center(
                     child: Lottie.asset("assets/lottie/loading1.json",
                         height: 80, width: 90),
@@ -64,10 +71,15 @@ class MyService extends StatelessWidget {
                     itemCount: controller.offers.length,
                     itemBuilder: (context, index) {
                       OfferModel offer = controller.offers[index];
-                      String lang = Get.find<LocaleController>().language.languageCode;
+                      String lang =
+                          Get.find<LocaleController>().language.languageCode;
                       return InkWell(
-                        onTap: () {
-                          Get.toNamed(AppRoute.offerRequest, arguments: offer);
+                        onTap: () async {
+                          await Get.toNamed(
+                            AppRoute.offerRequest,
+                            arguments: offer,
+                          );
+                          controller.getOffers();
                         },
                         child: Card(
                           margin: const EdgeInsets.symmetric(
@@ -78,7 +90,7 @@ class MyService extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          color: Color.fromARGB(255, 232, 232, 232),
+                          color: const Color.fromARGB(255, 232, 232, 232),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 20,
@@ -96,12 +108,13 @@ class MyService extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                Gap(10),
+                                const Gap(10),
                                 SizedBox(
                                   height: h * 0.25,
                                   child: NetworkImageView(
                                     url: offer.image,
                                     fit: BoxFit.fill,
+                                    headers: Applink.imageHeaders,
                                   ),
                                 ),
                                 Text(
@@ -133,7 +146,9 @@ class MyService extends StatelessWidget {
                         ),
                       );
                     },
-                  ));
+                  ),
+          ),
+        );
       },
     );
   }

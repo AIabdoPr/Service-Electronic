@@ -15,6 +15,8 @@ import 'package:get/get.dart';
 import 'package:storage_database/api/request.dart';
 import 'package:storage_database/api/response.dart';
 
+import '../Data/model/purchase.model.dart';
+
 class StoreController extends GetxController {
   GlobalKey<FormState> formstate = GlobalKey<FormState>();
   Map countries = {};
@@ -27,7 +29,9 @@ class StoreController extends GetxController {
   MainService myService = Get.find();
   Rx<UserModel?> get user => Get.find<AuthSerivce>().currentUser;
 
-  StatusRequest pageStatusRequest = StatusRequest.loading;
+  List<PurchaseModel> clientPurchases = [];
+  List<PurchaseModel> sellerPurchases = [];
+
   StatusRequest productsStatusRequest = StatusRequest.loading;
   RxList<CategoryModel> categories = <CategoryModel>[].obs;
   RxList<ProductModel> allProducts = <ProductModel>[].obs;
@@ -67,10 +71,12 @@ class StoreController extends GetxController {
   }
 
   onSearch(String value) {
-    if (serch.text.isEmpty) {
+    String text = serch.text.toLowerCase().trim();
+    if (text.isEmpty) {
       products.value = allProducts
           .where((product) =>
-              currenctCategory != -1 && product.category == currenctCategory ||
+              currenctCategory != -1 &&
+                  product.category.id == currenctCategory ||
               currenctCategory == -1)
           .toList();
     } else {
@@ -78,11 +84,11 @@ class StoreController extends GetxController {
           .where(
             (product) =>
                 (currenctCategory != -1 &&
-                        product.category == currenctCategory ||
+                        product.category.id == currenctCategory ||
                     currenctCategory == -1) &&
-                (product.name.contains(serch.text) ||
-                    product.price.toString().contains(serch.text) ||
-                    product.sellerFullName.contains(serch.text)),
+                (product.name.toLowerCase().contains(text) ||
+                    product.price.toString().contains(text) ||
+                    product.sellerFullName.toLowerCase().contains(text)),
           )
           .toList();
     }
@@ -95,25 +101,19 @@ class StoreController extends GetxController {
     currenctCategory = category;
     products.value = allProducts
         .where((product) =>
-            currenctCategory != -1 && product.category == currenctCategory ||
+            currenctCategory != -1 && product.category.id == currenctCategory ||
             currenctCategory == -1)
         .toList();
-    update();
-  }
-
-  Future init() async {
-    categories.value = await CategoryModel.loadAll();
-    user.listen((user) {
-      update();
-    });
-    await refreshProducts();
-    pageStatusRequest = StatusRequest.success;
     update();
   }
 
   Future refreshProducts() async {
     productsStatusRequest = StatusRequest.loading;
     update();
+    CategoryModel.loadAll().then((items) {
+      categories.value = items;
+      update();
+    });
     var items = await ProductModel.loadAll();
     allProducts.value = items;
     products.value = items;
@@ -124,10 +124,22 @@ class StoreController extends GetxController {
 
   @override
   void onInit() {
+    user.listen((user) => update());
     DefaultAssetBundle.of(Get.context!)
         .loadString("assets/countries.json")
         .then((data) {
       countries = jsonDecode(data);
+      update();
+    });
+
+    PurchaseModel.userLoadAll();
+    PurchaseModel.userStream().listen((items) {
+      clientPurchases = items;
+      update();
+    });
+    PurchaseModel.sellerLoadAll();
+    PurchaseModel.sellerStream().listen((items) {
+      sellerPurchases = items;
       update();
     });
 
@@ -137,7 +149,7 @@ class StoreController extends GetxController {
     street = TextEditingController();
     count = TextEditingController();
 
-    init();
+    refreshProducts();
     super.onInit();
   }
 
@@ -195,8 +207,7 @@ class StoreController extends GetxController {
   }
 
   double get totalPrice =>
-      (currenctProduct?.price ?? 0) * (int.tryParse(count.text) ?? 0) +
-      delveryPrice;
+      currenctProduct!.price * (int.tryParse(count.text) ?? 1) + delveryPrice;
   bool balanceInvalid = false;
 
   StatusRequest statusRequest = StatusRequest.success;
@@ -210,7 +221,7 @@ class StoreController extends GetxController {
           await myService.storageDatabase.storageAPI!.request(
         'purchase/${currenctProduct!.id}/create',
         RequestType.post,
-          headers: Applink.authedHeaders,
+        headers: Applink.authedHeaders,
         data: {
           'fullname': fullname.text,
           'phone': phone.text,
@@ -222,6 +233,7 @@ class StoreController extends GetxController {
       );
       if (response.success) {
         statusRequest = StatusRequest.success;
+        PurchaseModel.userLoadAll();
         Get.back();
       }
     }

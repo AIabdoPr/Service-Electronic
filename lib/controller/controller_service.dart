@@ -1,4 +1,5 @@
 import 'package:service_electronic/Data/model/offer.model.dart';
+import 'package:service_electronic/Data/model/offer_request.dart';
 import 'package:service_electronic/core/class/statusRequest.dart';
 import 'package:service_electronic/routes.dart';
 
@@ -9,6 +10,7 @@ class ServiceController extends GetxController {
   StatusRequest statusRequest = StatusRequest.loading;
 
   RxList<OfferModel> offers = <OfferModel>[].obs;
+  RxList<OfferRequestModel> offersRequests = <OfferRequestModel>[].obs;
   RxMap<int, String> selectedSubOffer = <int, String>{}.obs;
   RxMap<int, String> validates = <int, String>{}.obs;
 
@@ -22,7 +24,13 @@ class ServiceController extends GetxController {
     statusRequest = StatusRequest.loading;
     update();
     offers.value = await OfferModel.loadAll();
+    await getOffersRequests();
     statusRequest = StatusRequest.success;
+    update();
+  }
+
+  Future getOffersRequests() async {
+    offersRequests.value = await OfferRequestModel.loadAll();
     update();
   }
 
@@ -43,5 +51,4 @@ class ServiceController extends GetxController {
   Notificationservice() {
     Get.toNamed(AppRoute.notification);
   }
-
 }

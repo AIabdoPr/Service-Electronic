@@ -1,11 +1,9 @@
 import 'package:service_electronic/controller/controleer_signup.dart';
-import 'package:service_electronic/core/class/statusRequest.dart';
 import 'package:service_electronic/core/function/dealogAlartback.dart';
 
 import 'package:service_electronic/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 
 import '../../core/constant/bottun.dart';
 import '../../core/constant/castomTextFormField.dart';
@@ -21,11 +19,16 @@ class singup extends StatelessWidget {
     Get.put(signupController());
 
     return Scaffold(
+      appBar: PreferredSize(
+        child: Container(
+          color: Colors.amberAccent,
+        ),
+        preferredSize: Size(w, 0),
+      ),
       body: WillPopScope(
         onWillPop: alirtExitApp,
         child: GetBuilder<signupController>(
-          builder: ((controller) =>
-              Container(
+          builder: ((controller) => Container(
                 color: Colors.white70,
                 child: Form(
                   key: controller.formstate,
@@ -95,8 +98,8 @@ class singup extends StatelessWidget {
                                   return controller.errors['firstname'];
                                 }
                               },
-                              hintText: "112".tr,
-                              labeltext: "112".tr,
+                              hintText: "116".tr,
+                              labeltext: "116".tr,
                               iconData: Icons.person_outlined,
                               border: const OutlineInputBorder(
                                   borderRadius:
@@ -119,8 +122,8 @@ class singup extends StatelessWidget {
                                   return controller.errors['lastname'];
                                 }
                               },
-                              hintText: "116".tr,
-                              labeltext: "116".tr,
+                              hintText: "112".tr,
+                              labeltext: "112".tr,
                               iconData: Icons.person_outlined,
                               border: const OutlineInputBorder(
                                   borderRadius:
@@ -136,11 +139,12 @@ class singup extends StatelessWidget {
                                 if (value!.isEmpty) {
                                   return "2.5".tr;
                                 }
-                                if (!RegExp(
-                                        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-                                    .hasMatch(value)) {
-                                  return "21".tr;
-                                }
+                                if (!value.isEmail) return "23".tr;
+                                // if (!RegExp(
+                                //         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+                                //     .hasMatch(value)) {
+                                //   return "21".tr;
+                                // }
                                 if (controller.errors.containsKey('email')) {
                                   return controller.errors['email'];
                                 }
@@ -164,10 +168,11 @@ class singup extends StatelessWidget {
                                 if (value!.isEmpty) {
                                   return "19".tr;
                                 }
-                                if (!RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)')
-                                    .hasMatch(value)) {
-                                  return "23".tr;
-                                }
+                                if (!value.isPhoneNumber) return "23".tr;
+                                // if (!RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)')
+                                //     .hasMatch(value)) {
+                                //   return "23".tr;
+                                // }
                                 if (controller.errors.containsKey('phone')) {
                                   return controller.errors['phone'];
                                 }
@@ -191,11 +196,11 @@ class singup extends StatelessWidget {
                                   if (value!.isEmpty) {
                                     return "3".tr;
                                   }
-                                  if (!RegExp(
-                                          r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
-                                      .hasMatch(value)) {
-                                    return "22".tr;
-                                  }
+                                  // if (!RegExp(
+                                  //         r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
+                                  //     .hasMatch(value)) {
+                                  //   return "22".tr;
+                                  // }
                                   if (controller.errors
                                       .containsKey('password')) {
                                     return controller.errors['password'];
@@ -258,9 +263,7 @@ class singup extends StatelessWidget {
                                 style: const TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold),
                                 color: Colors.amberAccent,
-                                onPressed: () {
-                                  controller.signup();
-                                },
+                                onPressed: controller.signup,
                                 text: ("26".tr),
                               ),
                             ),

@@ -1,6 +1,6 @@
 import 'package:service_electronic/core/services/auth.service.dart';
 import 'package:service_electronic/link_api.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:storage_database/storage_database.dart';
@@ -27,30 +27,24 @@ class MainService extends GetxService {
     });
     await storageDatabase.collection('exchanges').set({});
     await storageDatabase.collection('notifications').set({});
-
     await storageDatabase.collection('settings').set({});
   }
 
   Future init() async {
-    await Firebase.initializeApp();
     storageDatabase = await StorageDatabase.getInstance();
     await storageDatabase.initExplorer();
     await storageDatabase.explorer!.initNetWorkFiles();
-    // var dir = storageDatabase.explorer!.directory('network-files');
-    // dir.stream().listen((event) {
-      // print(event);
-    // });
     // await storageDatabase.clear();
-    // storageDatabase.initAPI(
-    //   apiUrl: Applink.apiUrl,
-    // );
 
     await initCollections();
 
     if (await storageDatabase.collection('settings').get() == {}) {
-      await storageDatabase
-          .collection('settings')
-          .set({'token': '', 'authed': false, 'language': 'en'});
+      await storageDatabase.collection('settings').set({
+        'token': null,
+        'socket_token': null,
+        'authed': false,
+        'language': 'en'
+      });
     }
     LocaleController localeService = Get.put(LocaleController());
     localeService.language = Locale(

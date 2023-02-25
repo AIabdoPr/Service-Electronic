@@ -8,12 +8,14 @@ import '../../link_api.dart';
 
 class CategoryModel {
   int id;
+  String imageId;
   Map names;
 
-  CategoryModel(this.id, this.names);
+  CategoryModel(this.id, this.imageId, this.names);
 
   String get name => names[Get.find<LocaleController>().language.languageCode];
-  String get imageUrl => '${Applink.categories}/$id.png';
+
+  String get imageUrl => '${Applink.filesUrl}/$imageId';
 
   static StorageCollection document =
       Get.find<MainService>().storageDatabase.collection('categories');
@@ -24,7 +26,7 @@ class CategoryModel {
           await Get.find<MainService>().storageDatabase.storageAPI!.request(
                 'category',
                 RequestType.get,
-          headers: Applink.authedHeaders,
+                headers: Applink.authedHeaders,
               );
       if (response.success && response.value != null) {
         await document.set(
@@ -45,6 +47,7 @@ class CategoryModel {
 
   static CategoryModel fromMap(Map data) => CategoryModel(
         data['id'],
+        data['image_id'],
         data['name'],
       );
 

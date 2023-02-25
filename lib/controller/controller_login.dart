@@ -16,6 +16,7 @@ class LoginController extends GetxController {
   GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
 
   MainService myService = Get.find();
+  AuthSerivce authSerivce = Get.find();
 
   StatusRequest? statusRequest;
 
@@ -42,33 +43,17 @@ class LoginController extends GetxController {
         await myService.storageDatabase
             .collection('settings')
             .set({"token": loginResponse.value});
-        // باش نجيبو معلومات المستدم
-        APIResponse response = await myService.storageDatabase.storageAPI!.request(
-          Applink.user,
-          RequestType.get,
-          log: true,
-          headers: {
-            ...Applink.headers,'Authorization':'Bearer ${loginResponse.value['token']}'
-          },
-        );
-        if (response.success && response.value != null) {
-          response.value['token'] = loginResponse.value['token'];
-          response.value['socket_token'] = loginResponse.value['socket.token'];
-          await UserModel.storeUser(response.value); // التخزين درتو هنا
-          await Get.find<AuthSerivce>().onAuth();
-          Get.offNamed(AppRoute.home);
-        } else {
-          Get.back();
-          if (response.errors != null) {
-            errors = response.errors!;
-            loginFormKey.currentState!.validate();
-          } else {
-            Get.defaultDialog(
-              title: "login error",
-              middleText: response.message,
-            );
-          }
-        }
+        Map userData = loginResponse.value['user'];
+
+        await myService.storageDatabase.collection('settings').set({
+          'authed': true,
+          'token': loginResponse.value['token'],
+          'socket_token': loginResponse.value['socket.token'],
+        });
+        authSerivce.authed.value = true;
+        await (await UserModel.fromMap(userData)).save();
+        await Get.find<AuthSerivce>().onAuth();
+        Get.offNamed(AppRoute.home);
       } else {
         Get.back();
         if (loginResponse.errors != null) {
@@ -95,8 +80,8 @@ class LoginController extends GetxController {
 
   @override
   void onInit() {
-    email = TextEditingController(text: "service.m.e94@gmail.com");
-    password = TextEditingController(text: "Walid@1994");
+    email = TextEditingController();
+    password = TextEditingController();
 
     super.onInit();
   }

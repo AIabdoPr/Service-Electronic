@@ -1,3 +1,4 @@
+import 'package:dart_emoji/dart_emoji.dart';
 import 'package:service_electronic/core/class/statusRequest.dart';
 import 'package:service_electronic/core/constant/inkwell.dart';
 import 'package:flutter/material.dart';
@@ -20,12 +21,17 @@ class Login extends StatelessWidget {
 
     Get.put(LoginController());
     return Scaffold(
+      appBar: PreferredSize(
+        child: Container(
+          color: Colors.amberAccent,
+        ),
+        preferredSize: Size(w, 0),
+      ),
       body: WillPopScope(
           onWillPop: alirtExitApp,
           child: GetBuilder<LoginController>(
             init: LoginController(),
-            builder: ((controller) =>
-                Container(
+            builder: ((controller) => Container(
                   color: Colors.white70,
                   child: Form(
                     key: controller.loginFormKey,
@@ -64,11 +70,12 @@ class Login extends StatelessWidget {
                                           if (value!.isEmpty) {
                                             return "2.5".tr;
                                           }
-                                          if (!RegExp(
-                                                  r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-                                              .hasMatch(value)) {
-                                            return "21".tr;
-                                          }
+                                          if (!value.isEmail) return "23".tr;
+                                          // if (!RegExp(
+                                          //         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+                                          //     .hasMatch(value)) {
+                                          //   return "21".tr;
+                                          // }
                                           if (controller.errors
                                               .containsKey('email')) {
                                             return controller.errors['email'];
